@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESP32 Workshop — Project Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f11;
+    --surface: #141618;
+    --surface2: #1c1f23;
+    --border: #2a2d32;
+    --accent: #00e5a0;
+    --accent2: #5b8fff;
+    --accent3: #ff6b6b;
+    --text: #e8eaed;
+    --muted: #6b7280;
+    --code-bg: #0a0c0e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  h1 span { color: var(--accent); }
+  .header-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* NAV */
+  nav {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+  /* PROJECT CARD */
+  .project {
+    margin-bottom: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .project-header {
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .project-header:hover { background: var(--surface2); }
+  .proj-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,229,160,0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 38px;
+    text-align: center;
+  }
+  .proj-title { font-size: 17px; font-weight: 600; flex: 1; }
+  .proj-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+  .tag-output { color: #5b8fff; border-color: rgba(91,143,255,0.3); background: rgba(91,143,255,0.08); }
+  .tag-sensor { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.08); }
+  .tag-logic  { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+  .chevron {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+  .project.open .chevron { transform: rotate(180deg); }
+  .project-body { display: none; padding: 1.5rem; background: var(--surface); }
+  .project.open .project-body { display: block; }
+
+  /* SECTIONS INSIDE PROJECT */
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 10px;
+    margin-top: 1.5rem;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* WIRING TABLE */
+  .wiring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.5rem;
+  }
+  .wiring-table th {
+    text-align: left;
+    padding: 7px 12px;
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .wiring-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .wiring-table tr:last-child td { border-bottom: none; }
+  .pin-esp { color: var(--accent); }
+  .pin-comp { color: var(--accent2); }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  pre {
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    white-space: pre;
+  }
+
+  /* SYNTAX COLORS */
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .cm { color: #6272a4; font-style: italic; }
+  .st { color: #f1fa8c; }
+  .nm { color: #bd93f9; }
+  .tp { color: #8be9fd; }
+
+  /* TIP BOX */
+  .tip {
+    background: rgba(0,229,160,0.06);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #a7f3d0;
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+  .tip::before { content: '// TIP: '; color: var(--accent); }
+
+  .wokwi-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    text-decoration: none;
+    border: 1px solid rgba(91,143,255,0.3);
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-top: 1rem;
+    transition: all 0.15s;
+  }
+  .wokwi-link:hover { background: rgba(91,143,255,0.1); }
+
+  /* FOOTER */
+  footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">IEDC Workshop — ESP32 Basics</div>
+  <h1>10 <span>ESP32</span> Projects<br>Code + Wiring Guide</h1>
+  <div class="header-meta">
+    <span>Platform: Wokwi Simulator</span>
+    <span>Level: Beginner</span>
+    <span>All projects: No hardware needed</span>
+  </div>
+</header>
+
+<nav>
+  <a class="nav-btn" href="#p1">01 LED Blink</a>
+  <a class="nav-btn" href="#p2">02 Button + LED</a>
+  <a class="nav-btn" href="#p3">03 Potentiometer</a>
+  <a class="nav-btn" href="#p4">04 PWM Fade</a>
+  <a class="nav-btn" href="#p5">05 DHT11 Temp</a>
+  <a class="nav-btn" href="#p6">06 Ultrasonic</a>
+  <a class="nav-btn" href="#p7">07 Traffic Light</a>
+  <a class="nav-btn" href="#p8">08 Buzzer Melody</a>
+  <a class="nav-btn" href="#p9">09 PIR Motion</a>
+  <a class="nav-btn" href="#p10">10 LDR Auto LED</a>
+</nav>
+
+<main>
+
+<!-- PROJECT 1 -->
+<div class="project open" id="p1">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">01</span>
+    <span class="proj-title">LED Blink</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">GPIO digital output, setup() vs loop(), delay() timing — the foundation of all hardware projects.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED (+) Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED (–) Cathode</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 1: LED Blink</span>
+<span class="cm">// GPIO 2 is also the built-in LED on most ESP32 boards</span>
+
+<span class="kw">const int</span> LED_PIN = <span class="nm">2</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_PIN, OUTPUT);   <span class="cm">// set pin as output</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  digitalWrite(LED_PIN, HIGH);  <span class="cm">// LED ON</span>
+  delay(<span class="nm">1000</span>);                   <span class="cm">// wait 1 second</span>
+  digitalWrite(LED_PIN, LOW);   <span class="cm">// LED OFF</span>
+  delay(<span class="nm">1000</span>);                   <span class="cm">// wait 1 second</span>
+}</pre>
+    </div>
+    <div class="tip">Try changing 1000 to 100 — the LED blinks 10x faster. Ask students: what happens at delay(10)?</div>
+    <a class="wokwi-link" href="https://wokwi.com/projects/new/esp32" target="_blank">↗ Open in Wokwi</a>
+  </div>
+</div>
+
+<!-- PROJECT 2 -->
+<div class="project" id="p2">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">02</span>
+    <span class="proj-title">Push Button + LED</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Digital input reading, pull-up resistors, if-else logic — responding to real-world input.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">Button Pin 1</td><td class="pin-esp">GPIO 4</td><td>Any leg on one side</td></tr>
+      <tr><td class="pin-comp">Button Pin 2</td><td class="pin-esp">GND</td><td>Other leg</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 2: Push Button controls LED</span>
+<span class="cm">// INPUT_PULLUP uses ESP32's internal resistor — no external resistor needed</span>
+
+<span class="kw">const int</span> LED_PIN    = <span class="nm">2</span>;
+<span class="kw">const int</span> BUTTON_PIN = <span class="nm">4</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_PIN,    OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP); <span class="cm">// internal pull-up: HIGH when not pressed</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> btnState = digitalRead(BUTTON_PIN);
+
+  <span class="kw">if</span> (btnState == LOW) {    <span class="cm">// LOW = button pressed (pulled to GND)</span>
+    digitalWrite(LED_PIN, HIGH);
+  } <span class="kw">else</span> {
+    digitalWrite(LED_PIN, LOW);
+  }
+}</pre>
+    </div>
+    <div class="tip">INPUT_PULLUP inverts logic: LOW means pressed. Ask students why this is and what a pull-down resistor does differently.</div>
+  </div>
+</div>
+
+<!-- PROJECT 3 -->
+<div class="project" id="p3">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">03</span>
+    <span class="proj-title">Potentiometer + Serial Monitor</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, ADC (Analog-to-Digital Converter), Serial.print() for debugging — reading variable voltages.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Potentiometer Left</td><td class="pin-esp">3.3V</td><td>Power pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Middle (Wiper)</td><td class="pin-esp">GPIO 34</td><td>Analog input pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Right</td><td class="pin-esp">GND</td><td>Ground pin</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 3: Potentiometer value on Serial Monitor</span>
+<span class="cm">// ESP32 ADC is 12-bit: values range from 0 to 4095</span>
+
+<span class="kw">const int</span> POT_PIN = <span class="nm">34</span>; <span class="cm">// GPIO34 is input-only, great for analog</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);  <span class="cm">// start serial communication</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> rawValue = analogRead(POT_PIN);   <span class="cm">// 0 to 4095</span>
+  <span class="kw">int</span> percent  = map(rawValue, <span class="nm">0</span>, <span class="nm">4095</span>, <span class="nm">0</span>, <span class="nm">100</span>); <span class="cm">// convert to 0-100%</span>
+
+  Serial.print(<span class="st">"Raw: "</span>);
+  Serial.print(rawValue);
+  Serial.print(<span class="st">"  |  Percent: "</span>);
+  Serial.print(percent);
+  Serial.println(<span class="st">"%"</span>);
+
+  delay(<span class="nm">300</span>);  <span class="cm">// slow down output</span>
+}</pre>
+    </div>
+    <div class="tip">Open Wokwi's Serial Monitor (bottom panel) and turn the pot. map() is a very useful function — explain how it scales ranges.</div>
+  </div>
+</div>
+
+<!-- PROJECT 4 -->
+<div class="project" id="p4">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">04</span>
+    <span class="proj-title">PWM LED Dimmer (Fade)</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM (Pulse Width Modulation), duty cycle, ESP32's LEDC peripheral, smooth animation with for loops.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 4: PWM LED Fade using ESP32 LEDC</span>
+<span class="cm">// ESP32 uses ledcWrite instead of analogWrite</span>
+
+<span class="kw">const int</span> LED_PIN  = <span class="nm">16</span>;
+<span class="kw">const int</span> CHANNEL  = <span class="nm">0</span>;   <span class="cm">// PWM channel (0-15)</span>
+<span class="kw">const int</span> FREQ     = <span class="nm">5000</span>;<span class="cm">// 5 kHz frequency</span>
+<span class="kw">const int</span> RESOLUTION = <span class="nm">8</span>; <span class="cm">// 8-bit = values 0-255</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  ledcSetup(CHANNEL, FREQ, RESOLUTION); <span class="cm">// configure PWM</span>
+  ledcAttachPin(LED_PIN, CHANNEL);      <span class="cm">// attach LED pin to channel</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Fade in: 0 → 255</span>
+  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">0</span>; brightness <= <span class="nm">255</span>; brightness++) {
+    ledcWrite(CHANNEL, brightness);
+    delay(<span class="nm">8</span>);
+  }
+  <span class="cm">// Fade out: 255 → 0</span>
+  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">255</span>; brightness >= <span class="nm">0</span>; brightness--) {
+    ledcWrite(CHANNEL, brightness);
+    delay(<span class="nm">8</span>);
+  }
+}</pre>
+    </div>
+    <div class="tip">Ask students: if RESOLUTION is 8-bit, why do values go 0–255? (2^8 = 256 levels). Change delay(8) to delay(2) for a faster pulse effect.</div>
+  </div>
+</div>
+
+<!-- PROJECT 5 -->
+<div class="project" id="p5">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">05</span>
+    <span class="proj-title">Temperature & Humidity (DHT11)</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Sensor libraries, single-wire data protocol, reading structured sensor data (temperature + humidity together).</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">DHT11 VCC</td><td class="pin-esp">3.3V</td><td>Power</td></tr>
+      <tr><td class="pin-comp">DHT11 DATA</td><td class="pin-esp">GPIO 4</td><td>Through 10kΩ pull-up to 3.3V</td></tr>
+      <tr><td class="pin-comp">DHT11 GND</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Library needed</p>
+    <p style="font-size:12px;color:#9ca3af;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">In Wokwi: automatically available. In Arduino IDE: install "DHT sensor library" by Adafruit.</p>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 5: DHT11 Temperature & Humidity</span>
+<span class="cm">// Library: DHT sensor library by Adafruit</span>
+
+#include &lt;DHT.h&gt;
+
+<span class="kw">const int</span> DHT_PIN  = <span class="nm">4</span>;
+<span class="kw">const int</span> DHT_TYPE = DHT11;
+
+DHT dht(DHT_PIN, DHT_TYPE);
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  dht.begin();
+  Serial.println(<span class="st">"DHT11 Ready!"</span>);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  delay(<span class="nm">2000</span>);  <span class="cm">// DHT11 needs 2s between readings</span>
+
+  <span class="kw">float</span> humidity    = dht.readHumidity();
+  <span class="kw">float</span> temperature = dht.readTemperature(); <span class="cm">// Celsius</span>
+
+  <span class="kw">if</span> (isnan(humidity) || isnan(temperature)) {
+    Serial.println(<span class="st">"Sensor read error!"</span>);
+    <span class="kw">return</span>;
+  }
+
+  Serial.print(<span class="st">"Temp: "</span>);
+  Serial.print(temperature);
+  Serial.print(<span class="st">" °C  |  Humidity: "</span>);
+  Serial.print(humidity);
+  Serial.println(<span class="st">"%"</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, click the DHT11 sensor during simulation to manually change temperature and humidity values — great for live demos!</div>
+  </div>
+</div>
+
+<!-- PROJECT 6 -->
+<div class="project" id="p6">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">06</span>
+    <span class="proj-title">Ultrasonic Distance Meter (HC-SR04)</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Trigger/echo pulse timing, pulseIn(), speed of sound, converting microseconds to centimeters.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">HC-SR04 VCC</td><td class="pin-esp">5V (VIN)</td><td>HC-SR04 needs 5V, not 3.3V</td></tr>
+      <tr><td class="pin-comp">HC-SR04 TRIG</td><td class="pin-esp">GPIO 5</td><td>Trigger pin</td></tr>
+      <tr><td class="pin-comp">HC-SR04 ECHO</td><td class="pin-esp">GPIO 18</td><td>Echo pin</td></tr>
+      <tr><td class="pin-comp">HC-SR04 GND</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 6: Ultrasonic Distance Meter</span>
+<span class="cm">// Formula: distance (cm) = duration × 0.034 / 2</span>
+
+<span class="kw">const int</span> TRIG_PIN = <span class="nm">5</span>;
+<span class="kw">const int</span> ECHO_PIN = <span class="nm">18</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Send 10µs trigger pulse</span>
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(<span class="nm">2</span>);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(<span class="nm">10</span>);
+  digitalWrite(TRIG_PIN, LOW);
+
+  <span class="cm">// Measure echo duration in microseconds</span>
+  <span class="kw">long</span> duration = pulseIn(ECHO_PIN, HIGH);
+
+  <span class="cm">// Convert to centimeters</span>
+  <span class="kw">float</span> distance = duration * <span class="nm">0.034</span> / <span class="nm">2</span>;
+
+  Serial.print(<span class="st">"Distance: "</span>);
+  Serial.print(distance);
+  Serial.println(<span class="st">" cm"</span>);
+
+  delay(<span class="nm">500</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, drag the object in front of the HC-SR04 sensor to change the simulated distance. Ask students to explain why we divide by 2 (sound travels to object AND back).</div>
+  </div>
+</div>
+
+<!-- PROJECT 7 -->
+<div class="project" id="p7">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">07</span>
+    <span class="proj-title">Traffic Light (3 LEDs)</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Multiple GPIO outputs, sequential state logic, thinking in "states" — foundation of state machines.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Red LED Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Yellow LED Anode</td><td class="pin-esp">GPIO 4</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Green LED Anode</td><td class="pin-esp">GPIO 5</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">All LED Cathodes</td><td class="pin-esp">GND</td><td>Share a common GND</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 7: Traffic Light Sequence</span>
+
+<span class="kw">const int</span> RED_PIN    = <span class="nm">2</span>;
+<span class="kw">const int</span> YELLOW_PIN = <span class="nm">4</span>;
+<span class="kw">const int</span> GREEN_PIN  = <span class="nm">5</span>;
+
+<span class="tp">void</span> <span class="fn">allOff</span>() {
+  digitalWrite(RED_PIN,    LOW);
+  digitalWrite(YELLOW_PIN, LOW);
+  digitalWrite(GREEN_PIN,  LOW);
+}
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(RED_PIN,    OUTPUT);
+  pinMode(YELLOW_PIN, OUTPUT);
+  pinMode(GREEN_PIN,  OUTPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// RED — Stop</span>
+  allOff();
+  digitalWrite(RED_PIN, HIGH);
+  delay(<span class="nm">4000</span>);
+
+  <span class="cm">// RED + YELLOW — Get ready</span>
+  digitalWrite(YELLOW_PIN, HIGH);
+  delay(<span class="nm">1000</span>);
+
+  <span class="cm">// GREEN — Go</span>
+  allOff();
+  digitalWrite(GREEN_PIN, HIGH);
+  delay(<span class="nm">4000</span>);
+
+  <span class="cm">// YELLOW — Slow down</span>
+  allOff();
+  digitalWrite(YELLOW_PIN, HIGH);
+  delay(<span class="nm">1500</span>);
+}</pre>
+    </div>
+    <div class="tip">Challenge students: add a push button for pedestrian crossing — pressing it should interrupt the cycle and hold RED for 5 seconds.</div>
+  </div>
+</div>
+
+<!-- PROJECT 8 -->
+<div class="project" id="p8">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">08</span>
+    <span class="proj-title">Buzzer Melody Player</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM for audio, frequency = musical pitch, storing data in arrays, looping through arrays with for loops.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Buzzer (+)</td><td class="pin-esp">GPIO 18</td><td>Passive buzzer only (not active)</td></tr>
+      <tr><td class="pin-comp">Buzzer (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 8: Buzzer plays a simple melody</span>
+<span class="cm">// Using ESP32 LEDC for tone generation</span>
+
+<span class="kw">const int</span> BUZZER_PIN = <span class="nm">18</span>;
+<span class="kw">const int</span> CHANNEL    = <span class="nm">0</span>;
+
+<span class="cm">// Note frequencies (Hz)</span>
+<span class="kw">const int</span> NOTE_C4 = <span class="nm">262</span>;
+<span class="kw">const int</span> NOTE_D4 = <span class="nm">294</span>;
+<span class="kw">const int</span> NOTE_E4 = <span class="nm">330</span>;
+<span class="kw">const int</span> NOTE_F4 = <span class="nm">349</span>;
+<span class="kw">const int</span> NOTE_G4 = <span class="nm">392</span>;
+<span class="kw">const int</span> NOTE_A4 = <span class="nm">440</span>;
+<span class="kw">const int</span> REST    = <span class="nm">0</span>;
+
+<span class="cm">// Melody: Twinkle Twinkle Little Star</span>
+<span class="kw">int</span> melody[] = {
+  NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4,
+  NOTE_A4, NOTE_A4, NOTE_G4, REST,
+  NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4,
+  NOTE_D4, NOTE_D4, NOTE_C4, REST
+};
+
+<span class="kw">int</span> durations[] = {
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">800</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">800</span>, <span class="nm">400</span>
+};
+
+<span class="kw">int</span> noteCount = <span class="kw">sizeof</span>(melody) / <span class="kw">sizeof</span>(melody[<span class="nm">0</span>]);
+
+<span class="tp">void</span> <span class="fn">playTone</span>(<span class="kw">int</span> freq, <span class="kw">int</span> dur) {
+  <span class="kw">if</span> (freq == REST) {
+    ledcWriteTone(CHANNEL, <span class="nm">0</span>);
+  } <span class="kw">else</span> {
+    ledcWriteTone(CHANNEL, freq);
+  }
+  delay(dur);
+  ledcWriteTone(CHANNEL, <span class="nm">0</span>);
+  delay(<span class="nm">50</span>); <span class="cm">// short pause between notes</span>
+}
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  ledcSetup(CHANNEL, <span class="nm">2000</span>, <span class="nm">8</span>);
+  ledcAttachPin(BUZZER_PIN, CHANNEL);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; noteCount; i++) {
+    playTone(melody[i], durations[i]);
+  }
+  delay(<span class="nm">2000</span>); <span class="cm">// pause before repeating</span>
+}</pre>
+    </div>
+    <div class="tip">Explain: higher Hz = higher pitch. 440 Hz is concert A. Students can add their own notes to the arrays to compose a different song!</div>
+  </div>
+</div>
+
+<!-- PROJECT 9 -->
+<div class="project" id="p9">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">09</span>
+    <span class="proj-title">PIR Motion Alert</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Passive infrared sensing, real-world trigger events, responding to sensor HIGH/LOW state changes.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">PIR VCC</td><td class="pin-esp">5V (VIN)</td><td>PIR needs 5V</td></tr>
+      <tr><td class="pin-comp">PIR OUT</td><td class="pin-esp">GPIO 13</td><td>Signal pin</td></tr>
+      <tr><td class="pin-comp">PIR GND</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 9: PIR Motion Detector with LED Alert</span>
+<span class="cm">// PIR output is HIGH when motion detected, LOW otherwise</span>
+
+<span class="kw">const int</span> PIR_PIN = <span class="nm">13</span>;
+<span class="kw">const int</span> LED_PIN = <span class="nm">2</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(PIR_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  Serial.println(<span class="st">"PIR warming up... wait 30 seconds"</span>);
+  delay(<span class="nm">5000</span>); <span class="cm">// In real life PIR needs 30s warm-up; short for demo</span>
+  Serial.println(<span class="st">"Ready! Watching for motion..."</span>);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> motion = digitalRead(PIR_PIN);
+
+  <span class="kw">if</span> (motion == HIGH) {
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println(<span class="st">"Motion DETECTED!"</span>);
+    delay(<span class="nm">2000</span>);  <span class="cm">// keep LED on for 2 seconds</span>
+  } <span class="kw">else</span> {
+    digitalWrite(LED_PIN, LOW);
+    Serial.println(<span class="st">"No motion."</span>);
+  }
+
+  delay(<span class="nm">200</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, click the PIR sensor during simulation to toggle motion ON/OFF. Add a buzzer to make it a real intruder alarm!</div>
+  </div>
+</div>
+
+<!-- PROJECT 10 -->
+<div class="project" id="p10">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">10</span>
+    <span class="proj-title">LDR Light Sensor + Auto LED</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog sensors, voltage divider, threshold-based automation — the pattern behind smart lighting, auto-brightness, and countless IoT devices.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LDR Pin 1</td><td class="pin-esp">3.3V</td><td>One leg to power</td></tr>
+      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Also connect 10kΩ from this pin to GND</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor</td><td class="pin-esp">GPIO 34 → GND</td><td>Forms voltage divider with LDR</td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 10: LDR Auto LED — LED turns ON in the dark</span>
+<span class="cm">// Lower LDR value = more light. Higher value = darker.</span>
+
+<span class="kw">const int</span> LDR_PIN   = <span class="nm">34</span>;
+<span class="kw">const int</span> LED_PIN   = <span class="nm">2</span>;
+<span class="kw">const int</span> THRESHOLD = <span class="nm">2000</span>; <span class="cm">// adjust based on your environment</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(LED_PIN, OUTPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> ldrValue = analogRead(LDR_PIN);  <span class="cm">// 0–4095</span>
+
+  Serial.print(<span class="st">"Light level: "</span>);
+  Serial.print(ldrValue);
+
+  <span class="kw">if</span> (ldrValue &gt; THRESHOLD) {
+    <span class="cm">// It's dark — LDR resistance high, voltage high</span>
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println(<span class="st">"  → DARK, LED ON"</span>);
+  } <span class="kw">else</span> {
+    <span class="cm">// It's bright</span>
+    digitalWrite(LED_PIN, LOW);
+    Serial.println(<span class="st">"  → BRIGHT, LED OFF"</span>);
+  }
+
+  delay(<span class="nm">500</span>);
+}</pre>
+    </div>
+    <div class="tip">Run it first and read the raw LDR value in serial — then set THRESHOLD to a value between your bright and dark readings. In Wokwi, slide the LDR light slider to simulate day/night.</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <span>ESP32 Workshop — IEDC Club</span>
+  <span>Simulator: wokwi.com</span>
+  <span>All 10 projects · Beginner level</span>
+</footer>
+
+<script>
+function toggle(header) {
+  const project = header.parentElement;
+  project.classList.toggle('open');
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    btn.style.color = '#00e5a0';
+    btn.style.borderColor = '#00e5a0';
+    setTimeout(() => {
+      btn.textContent = 'copy';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
