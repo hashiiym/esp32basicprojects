@@ -4,8 +4,8 @@ Simple ESP32 workshop project pages collected in a lightweight static site.
 
 ## Project files
 
-- `website` contains the main HTML page for the workshop content.
-- `index.html` acts as the localhost-friendly entrypoint and loads `website`.
+- `index.html` is the main static site entrypoint for local hosting and deployment.
+- `website` is the original source copy kept in the repo.
 
 ## Run locally
 
@@ -24,5 +24,5 @@ http://localhost:8000
 ## Notes
 
 - No build step is required.
-- The site is fully static and can be hosted by any basic web server.
-- `index.html` was added so the page works cleanly at the root URL without renaming the original `website` file.
+- The site is fully static and can be hosted by any basic web server or platform such as Vercel.
+- Deploy the repository as a plain static site with `index.html` at the root.
