@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESP32 Workshop â€” Project Guide</title>
+<title>ESP32 Workshop — Project Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -286,7 +286,7 @@
 <body>
 
 <header>
-  <div class="header-tag">IEDC Workshop â€” ESP32 Basics</div>
+  <div class="header-tag">IEDC Workshop — ESP32 Basics</div>
   <h1>10 <span>ESP32</span> Projects<br>Code + Wiring Guide</h1>
   <div class="header-meta">
     <span>Platform: Wokwi Simulator</span>
@@ -318,17 +318,17 @@
     <div class="proj-tags">
       <span class="tag tag-output">output</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">GPIO digital output, setup() vs loop(), delay() timing â€” the foundation of all hardware projects.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">GPIO digital output, setup() vs loop(), delay() timing — the foundation of all hardware projects.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">LED (+) Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">LED (â€“) Cathode</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+      <tr><td class="pin-comp">LED (+) Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED (–) Cathode</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
@@ -350,8 +350,8 @@
   delay(<span class="nm">1000</span>);                   <span class="cm">// wait 1 second</span>
 }</pre>
     </div>
-    <div class="tip">Try changing 1000 to 100 â€” the LED blinks 10x faster. Ask students: what happens at delay(10)?</div>
-    <a class="wokwi-link" href="https://wokwi.com/projects/new/esp32" target="_blank">â†— Open in Wokwi</a>
+    <div class="tip">Try changing 1000 to 100 — the LED blinks 10x faster. Ask students: what happens at delay(10)?</div>
+    <a class="wokwi-link" href="https://wokwi.com/projects/new/esp32" target="_blank">↗ Open in Wokwi</a>
   </div>
 </div>
 
@@ -364,17 +364,17 @@
       <span class="tag tag-output">output</span>
       <span class="tag tag-logic">logic</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Digital input reading, pull-up resistors, if-else logic â€” responding to real-world input.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Digital input reading, pull-up resistors, if-else logic — responding to real-world input.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (â€“)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
       <tr><td class="pin-comp">Button Pin 1</td><td class="pin-esp">GPIO 4</td><td>Any leg on one side</td></tr>
       <tr><td class="pin-comp">Button Pin 2</td><td class="pin-esp">GND</td><td>Other leg</td></tr>
     </table>
@@ -383,7 +383,7 @@
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
       <pre><span class="cm">// Project 2: Push Button controls LED</span>
-<span class="cm">// INPUT_PULLUP uses ESP32's internal resistor â€” no external resistor needed</span>
+<span class="cm">// INPUT_PULLUP uses ESP32's internal resistor — no external resistor needed</span>
 
 <span class="kw">const int</span> LED_PIN    = <span class="nm">2</span>;
 <span class="kw">const int</span> BUTTON_PIN = <span class="nm">4</span>;
@@ -415,11 +415,11 @@
     <div class="proj-tags">
       <span class="tag tag-sensor">sensor</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, ADC (Analog-to-Digital Converter), Serial.print() for debugging â€” reading variable voltages.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, ADC (Analog-to-Digital Converter), Serial.print() for debugging — reading variable voltages.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
@@ -454,7 +454,7 @@
   delay(<span class="nm">300</span>);  <span class="cm">// slow down output</span>
 }</pre>
     </div>
-    <div class="tip">Open Wokwi's Serial Monitor (bottom panel) and turn the pot. map() is a very useful function â€” explain how it scales ranges.</div>
+    <div class="tip">Open Wokwi's Serial Monitor (bottom panel) and turn the pot. map() is a very useful function — explain how it scales ranges.</div>
   </div>
 </div>
 
@@ -467,7 +467,7 @@
       <span class="tag tag-output">output</span>
       <span class="tag tag-logic">logic</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
@@ -476,8 +476,8 @@
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (â€“)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
@@ -497,19 +497,19 @@
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="cm">// Fade in: 0 â†’ 255</span>
+  <span class="cm">// Fade in: 0 → 255</span>
   <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">0</span>; brightness <= <span class="nm">255</span>; brightness++) {
     ledcWrite(CHANNEL, brightness);
     delay(<span class="nm">8</span>);
   }
-  <span class="cm">// Fade out: 255 â†’ 0</span>
+  <span class="cm">// Fade out: 255 → 0</span>
   <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">255</span>; brightness >= <span class="nm">0</span>; brightness--) {
     ledcWrite(CHANNEL, brightness);
     delay(<span class="nm">8</span>);
   }
 }</pre>
     </div>
-    <div class="tip">Ask students: if RESOLUTION is 8-bit, why do values go 0â€“255? (2^8 = 256 levels). Change delay(8) to delay(2) for a faster pulse effect.</div>
+    <div class="tip">Ask students: if RESOLUTION is 8-bit, why do values go 0–255? (2^8 = 256 levels). Change delay(8) to delay(2) for a faster pulse effect.</div>
   </div>
 </div>
 
@@ -521,7 +521,7 @@
     <div class="proj-tags">
       <span class="tag tag-sensor">sensor</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
@@ -531,7 +531,7 @@
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
       <tr><td class="pin-comp">DHT11 VCC</td><td class="pin-esp">3.3V</td><td>Power</td></tr>
-      <tr><td class="pin-comp">DHT11 DATA</td><td class="pin-esp">GPIO 4</td><td>Through 10kÎ© pull-up to 3.3V</td></tr>
+      <tr><td class="pin-comp">DHT11 DATA</td><td class="pin-esp">GPIO 4</td><td>Through 10kΩ pull-up to 3.3V</td></tr>
       <tr><td class="pin-comp">DHT11 GND</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
@@ -570,12 +570,12 @@ DHT dht(DHT_PIN, DHT_TYPE);
 
   Serial.print(<span class="st">"Temp: "</span>);
   Serial.print(temperature);
-  Serial.print(<span class="st">" Â°C  |  Humidity: "</span>);
+  Serial.print(<span class="st">" °C  |  Humidity: "</span>);
   Serial.print(humidity);
   Serial.println(<span class="st">"%"</span>);
 }</pre>
     </div>
-    <div class="tip">In Wokwi, click the DHT11 sensor during simulation to manually change temperature and humidity values â€” great for live demos!</div>
+    <div class="tip">In Wokwi, click the DHT11 sensor during simulation to manually change temperature and humidity values — great for live demos!</div>
   </div>
 </div>
 
@@ -587,7 +587,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <div class="proj-tags">
       <span class="tag tag-sensor">sensor</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
@@ -606,7 +606,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
       <pre><span class="cm">// Project 6: Ultrasonic Distance Meter</span>
-<span class="cm">// Formula: distance (cm) = duration Ã— 0.034 / 2</span>
+<span class="cm">// Formula: distance (cm) = duration × 0.034 / 2</span>
 
 <span class="kw">const int</span> TRIG_PIN = <span class="nm">5</span>;
 <span class="kw">const int</span> ECHO_PIN = <span class="nm">18</span>;
@@ -618,7 +618,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="cm">// Send 10Âµs trigger pulse</span>
+  <span class="cm">// Send 10µs trigger pulse</span>
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(<span class="nm">2</span>);
   digitalWrite(TRIG_PIN, HIGH);
@@ -651,18 +651,18 @@ DHT dht(DHT_PIN, DHT_TYPE);
       <span class="tag tag-output">output</span>
       <span class="tag tag-logic">logic</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Multiple GPIO outputs, sequential state logic, thinking in "states" â€” foundation of state machines.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Multiple GPIO outputs, sequential state logic, thinking in "states" — foundation of state machines.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">Red LED Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">Yellow LED Anode</td><td class="pin-esp">GPIO 4</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">Green LED Anode</td><td class="pin-esp">GPIO 5</td><td>Through 220Î© resistor</td></tr>
+      <tr><td class="pin-comp">Red LED Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Yellow LED Anode</td><td class="pin-esp">GPIO 4</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Green LED Anode</td><td class="pin-esp">GPIO 5</td><td>Through 220Ω resistor</td></tr>
       <tr><td class="pin-comp">All LED Cathodes</td><td class="pin-esp">GND</td><td>Share a common GND</td></tr>
     </table>
 
@@ -688,27 +688,27 @@ DHT dht(DHT_PIN, DHT_TYPE);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="cm">// RED â€” Stop</span>
+  <span class="cm">// RED — Stop</span>
   allOff();
   digitalWrite(RED_PIN, HIGH);
   delay(<span class="nm">4000</span>);
 
-  <span class="cm">// RED + YELLOW â€” Get ready</span>
+  <span class="cm">// RED + YELLOW — Get ready</span>
   digitalWrite(YELLOW_PIN, HIGH);
   delay(<span class="nm">1000</span>);
 
-  <span class="cm">// GREEN â€” Go</span>
+  <span class="cm">// GREEN — Go</span>
   allOff();
   digitalWrite(GREEN_PIN, HIGH);
   delay(<span class="nm">4000</span>);
 
-  <span class="cm">// YELLOW â€” Slow down</span>
+  <span class="cm">// YELLOW — Slow down</span>
   allOff();
   digitalWrite(YELLOW_PIN, HIGH);
   delay(<span class="nm">1500</span>);
 }</pre>
     </div>
-    <div class="tip">Challenge students: add a push button for pedestrian crossing â€” pressing it should interrupt the cycle and hold RED for 5 seconds.</div>
+    <div class="tip">Challenge students: add a push button for pedestrian crossing — pressing it should interrupt the cycle and hold RED for 5 seconds.</div>
   </div>
 </div>
 
@@ -720,7 +720,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <div class="proj-tags">
       <span class="tag tag-output">output</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
@@ -730,7 +730,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
       <tr><td class="pin-comp">Buzzer (+)</td><td class="pin-esp">GPIO 18</td><td>Passive buzzer only (not active)</td></tr>
-      <tr><td class="pin-comp">Buzzer (â€“)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">Buzzer (–)</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
@@ -804,7 +804,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
       <span class="tag tag-sensor">sensor</span>
       <span class="tag tag-logic">logic</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
@@ -816,8 +816,8 @@ DHT dht(DHT_PIN, DHT_TYPE);
       <tr><td class="pin-comp">PIR VCC</td><td class="pin-esp">5V (VIN)</td><td>PIR needs 5V</td></tr>
       <tr><td class="pin-comp">PIR OUT</td><td class="pin-esp">GPIO 13</td><td>Signal pin</td></tr>
       <tr><td class="pin-comp">PIR GND</td><td class="pin-esp">GND</td><td></td></tr>
-      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (â€“)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
@@ -867,26 +867,26 @@ DHT dht(DHT_PIN, DHT_TYPE);
       <span class="tag tag-output">output</span>
       <span class="tag tag-logic">logic</span>
     </div>
-    <span class="chevron">â–¾</span>
+    <span class="chevron">▾</span>
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog sensors, voltage divider, threshold-based automation â€” the pattern behind smart lighting, auto-brightness, and countless IoT devices.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog sensors, voltage divider, threshold-based automation — the pattern behind smart lighting, auto-brightness, and countless IoT devices.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
       <tr><td class="pin-comp">LDR Pin 1</td><td class="pin-esp">3.3V</td><td>One leg to power</td></tr>
-      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Also connect 10kÎ© from this pin to GND</td></tr>
-      <tr><td class="pin-comp">10kÎ© Resistor</td><td class="pin-esp">GPIO 34 â†’ GND</td><td>Forms voltage divider with LDR</td></tr>
-      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Î© resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (â€“)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Also connect 10kΩ from this pin to GND</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor</td><td class="pin-esp">GPIO 34 → GND</td><td>Forms voltage divider with LDR</td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 10: LDR Auto LED â€” LED turns ON in the dark</span>
+      <pre><span class="cm">// Project 10: LDR Auto LED — LED turns ON in the dark</span>
 <span class="cm">// Lower LDR value = more light. Higher value = darker.</span>
 
 <span class="kw">const int</span> LDR_PIN   = <span class="nm">34</span>;
@@ -899,34 +899,34 @@ DHT dht(DHT_PIN, DHT_TYPE);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="kw">int</span> ldrValue = analogRead(LDR_PIN);  <span class="cm">// 0â€“4095</span>
+  <span class="kw">int</span> ldrValue = analogRead(LDR_PIN);  <span class="cm">// 0–4095</span>
 
   Serial.print(<span class="st">"Light level: "</span>);
   Serial.print(ldrValue);
 
   <span class="kw">if</span> (ldrValue &gt; THRESHOLD) {
-    <span class="cm">// It's dark â€” LDR resistance high, voltage high</span>
+    <span class="cm">// It's dark — LDR resistance high, voltage high</span>
     digitalWrite(LED_PIN, HIGH);
-    Serial.println(<span class="st">"  â†’ DARK, LED ON"</span>);
+    Serial.println(<span class="st">"  → DARK, LED ON"</span>);
   } <span class="kw">else</span> {
     <span class="cm">// It's bright</span>
     digitalWrite(LED_PIN, LOW);
-    Serial.println(<span class="st">"  â†’ BRIGHT, LED OFF"</span>);
+    Serial.println(<span class="st">"  → BRIGHT, LED OFF"</span>);
   }
 
   delay(<span class="nm">500</span>);
 }</pre>
     </div>
-    <div class="tip">Run it first and read the raw LDR value in serial â€” then set THRESHOLD to a value between your bright and dark readings. In Wokwi, slide the LDR light slider to simulate day/night.</div>
+    <div class="tip">Run it first and read the raw LDR value in serial — then set THRESHOLD to a value between your bright and dark readings. In Wokwi, slide the LDR light slider to simulate day/night.</div>
   </div>
 </div>
 
 </main>
 
 <footer>
-  <span>ESP32 Workshop â€” IEDC Club</span>
+  <span>ESP32 Workshop — IEDC Club</span>
   <span>Simulator: wokwi.com</span>
-  <span>All 10 projects Â· Beginner level</span>
+  <span>All 10 projects · Beginner level</span>
 </footer>
 
 <script>
@@ -952,4 +952,3 @@ function copyCode(btn) {
 </script>
 </body>
 </html>
-
