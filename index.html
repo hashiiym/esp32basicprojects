@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Workshop</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0d0f11;
+      color: #e8eaed;
+      font-family: Arial, sans-serif;
+    }
+
+    .status {
+      max-width: 40rem;
+      padding: 1.5rem;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="status" id="status">Loading site preview...</div>
+  <script>
+    async function loadPage() {
+      const status = document.getElementById("status");
+
+      try {
+        const response = await fetch("./website");
+        if (!response.ok) {
+          throw new Error("Request failed with status " + response.status);
+        }
+
+        const html = await response.text();
+        document.open();
+        document.write(html);
+        document.close();
+      } catch (error) {
+        status.innerHTML =
+          "Couldn't load <code>website</code>. Start the server from this folder with <code>python -m http.server 8000</code> and reload the page.<br><br>" +
+          String(error);
+      }
+    }
+
+    loadPage();
+  </script>
+</body>
+</html>
