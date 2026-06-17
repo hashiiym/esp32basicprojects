@@ -89,7 +89,14 @@
   .header-meta span { display: flex; align-items: center; gap: 6px; }
   @media (max-width: 600px) {
     .header-image {
-      display: none;
+      display: none !important;
+    }
+    .header-text {
+      width: 100%;
+      flex: 1;
+    }
+    header > div {
+      flex-direction: column;
     }
   }
 
