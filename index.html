@@ -697,28 +697,24 @@
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 4: PWM LED Fade using ESP32 LEDC</span>
-<span class="cm">// ESP32 uses ledcWrite instead of analogWrite</span>
+      <pre><span class="cm">// Project 4: PWM LED Fade using ESP32 (Arduino Core v3.x compatible)</span>
+<span class="cm">// Uses analogWrite() — compatible with ESP32 Arduino Core v3.x and Wokwi</span>
 
-<span class="kw">const int</span> LED_PIN  = <span class="nm">16</span>;
-<span class="kw">const int</span> CHANNEL  = <span class="nm">0</span>;   <span class="cm">// PWM channel (0-15)</span>
-<span class="kw">const int</span> FREQ     = <span class="nm">5000</span>;<span class="cm">// 5 kHz frequency</span>
-<span class="kw">const int</span> RESOLUTION = <span class="nm">8</span>; <span class="cm">// 8-bit = values 0-255</span>
+<span class="kw">const int</span> LED_PIN = <span class="nm">16</span>;
 
 <span class="tp">void</span> <span class="fn">setup</span>() {
-  ledcSetup(CHANNEL, FREQ, RESOLUTION); <span class="cm">// configure PWM</span>
-  ledcAttachPin(LED_PIN, CHANNEL);      <span class="cm">// attach LED pin to channel</span>
+  pinMode(LED_PIN, OUTPUT);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
   <span class="cm">// Fade in: 0 → 255</span>
   <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">0</span>; brightness <= <span class="nm">255</span>; brightness++) {
-    ledcWrite(CHANNEL, brightness);
+    analogWrite(LED_PIN, brightness);
     delay(<span class="nm">8</span>);
   }
   <span class="cm">// Fade out: 255 → 0</span>
   <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">255</span>; brightness >= <span class="nm">0</span>; brightness--) {
-    ledcWrite(CHANNEL, brightness);
+    analogWrite(LED_PIN, brightness);
     delay(<span class="nm">8</span>);
   }
 }</pre>
@@ -950,11 +946,9 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 8: Buzzer plays a simple melody</span>
-<span class="cm">// Using ESP32 LEDC for tone generation</span>
+      <pre><span class="cm">// Project 8: Buzzer Melody — Wokwi compatible (Arduino Core v3.x)</span>
 
 <span class="kw">const int</span> BUZZER_PIN = <span class="nm">18</span>;
-<span class="kw">const int</span> CHANNEL    = <span class="nm">0</span>;
 
 <span class="cm">// Note frequencies (Hz)</span>
 <span class="kw">const int</span> NOTE_C4 = <span class="nm">262</span>;
@@ -965,7 +959,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
 <span class="kw">const int</span> NOTE_A4 = <span class="nm">440</span>;
 <span class="kw">const int</span> REST    = <span class="nm">0</span>;
 
-<span class="cm">// Melody: Twinkle Twinkle Little Star</span>
+<span class="cm">// Twinkle Twinkle Little Star</span>
 <span class="kw">int</span> melody[] = {
   NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4,
   NOTE_A4, NOTE_A4, NOTE_G4, REST,
@@ -982,27 +976,21 @@ DHT dht(DHT_PIN, DHT_TYPE);
 
 <span class="kw">int</span> noteCount = <span class="kw">sizeof</span>(melody) / <span class="kw">sizeof</span>(melody[<span class="nm">0</span>]);
 
-<span class="tp">void</span> <span class="fn">playTone</span>(<span class="kw">int</span> freq, <span class="kw">int</span> dur) {
-  <span class="kw">if</span> (freq == REST) {
-    ledcWriteTone(CHANNEL, <span class="nm">0</span>);
-  } <span class="kw">else</span> {
-    ledcWriteTone(CHANNEL, freq);
-  }
-  delay(dur);
-  ledcWriteTone(CHANNEL, <span class="nm">0</span>);
-  delay(<span class="nm">50</span>); <span class="cm">// short pause between notes</span>
-}
-
 <span class="tp">void</span> <span class="fn">setup</span>() {
-  ledcSetup(CHANNEL, <span class="nm">2000</span>, <span class="nm">8</span>);
-  ledcAttachPin(BUZZER_PIN, CHANNEL);
+  pinMode(BUZZER_PIN, OUTPUT);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
   <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; noteCount; i++) {
-    playTone(melody[i], durations[i]);
+    <span class="kw">if</span> (melody[i] == REST) {
+      noTone(BUZZER_PIN);
+    } <span class="kw">else</span> {
+      tone(BUZZER_PIN, melody[i], durations[i]);
+    }
+    delay(durations[i] + <span class="nm">50</span>); <span class="cm">// note duration + short gap</span>
+    noTone(BUZZER_PIN);
   }
-  delay(<span class="nm">2000</span>); <span class="cm">// pause before repeating</span>
+  delay(<span class="nm">2000</span>);
 }</pre>
     </div>
     <div class="tip">Explain: higher Hz = higher pitch. 440 Hz is concert A. Students can add their own notes to the arrays to compose a different song!</div>
@@ -1090,12 +1078,14 @@ DHT dht(DHT_PIN, DHT_TYPE);
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">LDR Pin 1</td><td class="pin-esp">3.3V</td><td>One leg to power</td></tr>
-      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Also connect 10kΩ from this pin to GND</td></tr>
-      <tr><td class="pin-comp">10kΩ Resistor</td><td class="pin-esp">GPIO 34 → GND</td><td>Forms voltage divider with LDR</td></tr>
+      <tr><td class="pin-comp">LDR Pin 1</td><td class="pin-esp">3.3V</td><td>Either leg of the LDR</td></tr>
+      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Other leg of the LDR</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor Pin 1</td><td class="pin-esp">GPIO 34</td><td>Same row as LDR Pin 2</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor Pin 2</td><td class="pin-esp">GND</td><td>Pulls the signal down</td></tr>
       <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Cathode (−)</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
     </table>
+    <div class="tip">Think of the LDR and the 10kΩ resistor as a voltage divider — they share a middle point connected to GPIO 34. When it's bright, LDR resistance drops and the voltage at GPIO 34 goes low. When dark, resistance rises and voltage goes high. The ESP32 reads this change.</div>
 
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
