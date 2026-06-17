@@ -685,41 +685,50 @@
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM (Pulse Width Modulation), duty cycle, ESP32's LEDC peripheral, smooth animation with for loops.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, mapping values, PWM output, connecting input sensors to output devices — the foundation of all control systems.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
       <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Ω resistor</td></tr>
-      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Cathode (−)</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+      <tr><td class="pin-comp">Potentiometer Left</td><td class="pin-esp">3.3V</td><td>Power pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Middle (Wiper)</td><td class="pin-esp">GPIO 34</td><td>Analog signal pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Right</td><td class="pin-esp">GND</td><td>Ground pin</td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 4: PWM LED Fade using ESP32 (Arduino Core v3.x compatible)</span>
-<span class="cm">// Uses analogWrite() — compatible with ESP32 Arduino Core v3.x and Wokwi</span>
+      <pre><span class="cm">// Project 4: Potentiometer controls LED brightness</span>
+<span class="cm">// Turn the pot — LED gets brighter or dimmer in real time</span>
+<span class="cm">// ESP32 Arduino Core v3.x compatible — uses ledc functions</span>
 
-<span class="kw">const int</span> LED_PIN = <span class="nm">16</span>;
+<span class="kw">const int</span> LED_PIN   = <span class="nm">16</span>;
+<span class="kw">const int</span> POT_PIN   = <span class="nm">34</span>;
+<span class="kw">const int</span> PWM_FREQ  = <span class="nm">5000</span>;
+<span class="kw">const int</span> PWM_RES   = <span class="nm">8</span>;     <span class="cm">// 8-bit: values 0-255</span>
 
 <span class="tp">void</span> <span class="fn">setup</span>() {
-  pinMode(LED_PIN, OUTPUT);
+  Serial.begin(<span class="nm">115200</span>);
+  ledcAttach(LED_PIN, PWM_FREQ, PWM_RES); <span class="cm">// Core v3.x single-call setup</span>
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="cm">// Fade in: 0 → 255</span>
-  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">0</span>; brightness <= <span class="nm">255</span>; brightness++) {
-    analogWrite(LED_PIN, brightness);
-    delay(<span class="nm">8</span>);
-  }
-  <span class="cm">// Fade out: 255 → 0</span>
-  <span class="kw">for</span> (<span class="kw">int</span> brightness = <span class="nm">255</span>; brightness >= <span class="nm">0</span>; brightness--) {
-    analogWrite(LED_PIN, brightness);
-    delay(<span class="nm">8</span>);
-  }
+  <span class="kw">int</span> potValue  = analogRead(POT_PIN);           <span class="cm">// 0 to 4095 (12-bit ADC)</span>
+  <span class="kw">int</span> brightness = map(potValue, <span class="nm">0</span>, <span class="nm">4095</span>, <span class="nm">0</span>, <span class="nm">255</span>); <span class="cm">// scale to 0-255</span>
+
+  ledcWrite(LED_PIN, brightness);
+
+  Serial.print(<span class="st">"Pot: "</span>);
+  Serial.print(potValue);
+  Serial.print(<span class="st">"  →  Brightness: "</span>);
+  Serial.println(brightness);
+
+  delay(<span class="nm">30</span>);
 }</pre>
     </div>
-    <div class="tip">Ask students: if RESOLUTION is 8-bit, why do values go 0–255? (2^8 = 256 levels). Change delay(8) to delay(2) for a faster pulse effect.</div>
+    <div class="tip">Turn the potentiometer in Wokwi and watch the LED dim and brighten in real time. Open the Serial Monitor to see the raw pot value and the mapped brightness value side by side — this is exactly how volume knobs and dimmers work.</div>
   </div>
 </div>
 
