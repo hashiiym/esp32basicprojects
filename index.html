@@ -700,32 +700,28 @@
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 4: Potentiometer controls LED brightness</span>
-<span class="cm">// Turn the pot — LED gets brighter or dimmer in real time</span>
-<span class="cm">// ESP32 Arduino Core v3.x compatible — uses ledc functions</span>
+      <pre><span class="cm">// Project 4: PWM LED Fade — smooth brightness in and out</span>
+<span class="cm">// Compatible with ESP32 Arduino Core v3.x (Wokwi default)</span>
 
-<span class="kw">const int</span> LED_PIN   = <span class="nm">16</span>;
-<span class="kw">const int</span> POT_PIN   = <span class="nm">34</span>;
-<span class="kw">const int</span> PWM_FREQ  = <span class="nm">5000</span>;
-<span class="kw">const int</span> PWM_RES   = <span class="nm">8</span>;     <span class="cm">// 8-bit: values 0-255</span>
+<span class="kw">const int</span> LED_PIN  = <span class="nm">16</span>;
+<span class="kw">const int</span> PWM_FREQ = <span class="nm">5000</span>;  <span class="cm">// 5 kHz</span>
+<span class="kw">const int</span> PWM_RES  = <span class="nm">8</span>;     <span class="cm">// 8-bit resolution: values 0–255</span>
 
 <span class="tp">void</span> <span class="fn">setup</span>() {
-  Serial.begin(<span class="nm">115200</span>);
-  ledcAttach(LED_PIN, PWM_FREQ, PWM_RES); <span class="cm">// Core v3.x single-call setup</span>
+  ledcAttach(LED_PIN, PWM_FREQ, PWM_RES); <span class="cm">// single-call setup (Core v3.x)</span>
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  <span class="kw">int</span> potValue  = analogRead(POT_PIN);           <span class="cm">// 0 to 4095 (12-bit ADC)</span>
-  <span class="kw">int</span> brightness = map(potValue, <span class="nm">0</span>, <span class="nm">4095</span>, <span class="nm">0</span>, <span class="nm">255</span>); <span class="cm">// scale to 0-255</span>
-
-  ledcWrite(LED_PIN, brightness);
-
-  Serial.print(<span class="st">"Pot: "</span>);
-  Serial.print(potValue);
-  Serial.print(<span class="st">"  →  Brightness: "</span>);
-  Serial.println(brightness);
-
-  delay(<span class="nm">30</span>);
+  <span class="cm">// Fade in: dark → bright</span>
+  <span class="kw">for</span> (<span class="kw">int</span> b = <span class="nm">0</span>; b <= <span class="nm">255</span>; b++) {
+    ledcWrite(LED_PIN, b);
+    delay(<span class="nm">8</span>);
+  }
+  <span class="cm">// Fade out: bright → dark</span>
+  <span class="kw">for</span> (<span class="kw">int</span> b = <span class="nm">255</span>; b >= <span class="nm">0</span>; b--) {
+    ledcWrite(LED_PIN, b);
+    delay(<span class="nm">8</span>);
+  }
 }</pre>
     </div>
     <div class="tip">Turn the potentiometer in Wokwi and watch the LED dim and brighten in real time. Open the Serial Monitor to see the raw pot value and the mapped brightness value side by side — this is exactly how volume knobs and dimmers work.</div>
