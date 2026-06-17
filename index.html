@@ -33,6 +33,25 @@
     border-bottom: 1px solid var(--border);
     max-width: 960px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .header-text {
+    flex: 0 1 60%;
+  }
+  .header-image {
+    flex: 0 1 40%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .header-image img {
+    width: 100%;
+    max-width: 320px;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 24px rgba(0,229,160,0.18));
+    transform: rotate(-10deg);
   }
   .header-tag {
     font-family: 'JetBrains Mono', monospace;
@@ -68,6 +87,11 @@
     font-family: 'JetBrains Mono', monospace;
   }
   .header-meta span { display: flex; align-items: center; gap: 6px; }
+  @media (max-width: 600px) {
+    .header-image {
+      display: none;
+    }
+  }
 
   /* NAV */
   nav {
@@ -92,9 +116,108 @@
     text-decoration: none;
   }
   .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.locked {
+    opacity: 0.45;
+    pointer-events: none;
+  }
 
   /* MAIN */
   main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+  .prereq {
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(0,229,160,0.05), rgba(20,22,24,0.95));
+    overflow: hidden;
+  }
+  .prereq-header {
+    padding: 1.25rem 1.5rem;
+    background: rgba(0,229,160,0.04);
+  }
+  .prereq-toggle {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid rgba(0,229,160,0.22);
+    border-radius: 999px;
+    background: rgba(0,229,160,0.06);
+    color: var(--accent);
+    padding: 0.7rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .prereq-toggle:hover {
+    background: rgba(0,229,160,0.1);
+    border-color: rgba(0,229,160,0.38);
+  }
+  .prereq-toggle-icon {
+    display: inline-block;
+    transition: transform 0.35s ease;
+    transform-origin: center;
+  }
+  .prereq.expanded .prereq-toggle-icon {
+    transform: rotate(180deg);
+  }
+  .prereq-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .prereq.expanded .prereq-content {
+    max-height: 1200px;
+  }
+  .prereq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .prereq-copy {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 0.65rem;
+    max-width: 52rem;
+  }
+  .prereq-block h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .prereq-list {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .prereq-list li {
+    padding-left: 1rem;
+    position: relative;
+  }
+  .prereq-list li::before {
+    content: '+';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .prereq-note {
+    margin: 0 1.5rem 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,160,0.18);
+    background: rgba(0,229,160,0.06);
+    color: #b7f7df;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
 
   /* PROJECT CARD */
   .project {
@@ -114,6 +237,15 @@
     user-select: none;
   }
   .project-header:hover { background: var(--surface2); }
+  .project.locked {
+    opacity: 0.48;
+  }
+  .project.locked .project-header {
+    cursor: not-allowed;
+  }
+  .project.locked .project-header:hover {
+    background: var(--surface);
+  }
   .proj-num {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -136,6 +268,22 @@
   .tag-output { color: #5b8fff; border-color: rgba(91,143,255,0.3); background: rgba(91,143,255,0.08); }
   .tag-sensor { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.08); }
   .tag-logic  { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+  .lock-indicator {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: #d1d5db;
+    border: 1px solid rgba(209,213,219,0.22);
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    background: rgba(255,255,255,0.03);
+  }
+  .project.locked .lock-indicator {
+    display: inline-flex;
+  }
   .chevron {
     font-size: 18px;
     color: var(--muted);
@@ -266,6 +414,60 @@
     transition: all 0.15s;
   }
   .wokwi-link:hover { background: rgba(91,143,255,0.1); }
+  .project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+  }
+  .flow-btn {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .flow-btn:hover {
+    transform: translateY(-1px);
+  }
+  .next-btn {
+    background: var(--accent);
+    color: #06271d;
+  }
+  .complete-btn {
+    background: transparent;
+    color: var(--accent);
+    border-color: rgba(0,229,160,0.35);
+  }
+  .complete-btn:hover {
+    background: rgba(0,229,160,0.08);
+  }
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent);
+    color: #06271d;
+    font-weight: 700;
+  }
+  .completion-banner {
+    display: none;
+    margin-top: 1.2rem;
+    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,160,0.25);
+    background: rgba(0,229,160,0.08);
+    color: #b7f7df;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .completion-banner.visible {
+    display: block;
+  }
 
   /* FOOTER */
   footer {
@@ -286,12 +488,17 @@
 <body>
 
 <header>
-  <div class="header-tag">IEDC Workshop — ESP32 Basics</div>
-  <h1>10 <span>ESP32</span> Projects<br>Code + Wiring Guide</h1>
-  <div class="header-meta">
-    <span>Platform: Wokwi Simulator</span>
-    <span>Level: Beginner</span>
-    <span>All projects: No hardware needed</span>
+  <div class="header-text">
+    <div class="header-tag">IEDC Workshop — ESP32 Basics</div>
+    <h1>10 <span>ESP32</span> Projects<br>Code + Wiring Guide</h1>
+    <div class="header-meta">
+      <span>Platform: Wokwi Simulator</span>
+      <span>Level: Beginner</span>
+      <span>All projects: No hardware needed</span>
+    </div>
+  </div>
+  <div class="header-image">
+    <img src="ESP32_ESP-32S_Development_Board_2_4GHz_WiFi+Bluetooth_Dual_Mode_-_Redeem_Hardware_Products__DIY_Electronics__and_Kits_by_PCBWay_Beans-removebg-preview.png" alt="ESP32 development board">
   </div>
 </header>
 
@@ -930,9 +1137,223 @@ DHT dht(DHT_PIN, DHT_TYPE);
 </footer>
 
 <script>
+const STORAGE_KEY = 'unlockedUpTo';
+const COMPLETE_KEY = 'allProjectsComplete';
+const LAST_PROJECT = 10;
+
+function getUnlockedUpTo() {
+  const value = parseInt(localStorage.getItem(STORAGE_KEY) || '1', 10);
+  if (Number.isNaN(value)) return 1;
+  return Math.min(Math.max(value, 1), LAST_PROJECT);
+}
+
+function setUnlockedUpTo(value) {
+  localStorage.setItem(STORAGE_KEY, String(Math.min(Math.max(value, 1), LAST_PROJECT)));
+}
+
+function closeAllProjects() {
+  document.querySelectorAll('.project').forEach((project) => {
+    project.classList.remove('open');
+  });
+}
+
+function openProject(projectNumber, shouldScroll) {
+  const project = document.getElementById(`p${projectNumber}`);
+  if (!project) return;
+  closeAllProjects();
+  project.classList.add('open');
+  if (shouldScroll) {
+    project.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function setCompletionBannerVisible(visible) {
+  const banner = document.getElementById('completionBanner');
+  if (!banner) return;
+  banner.classList.toggle('visible', visible);
+}
+
+function updateProjects() {
+  const unlockedUpTo = getUnlockedUpTo();
+  document.querySelectorAll('.project').forEach((project) => {
+    const projectNumber = Number(project.dataset.project);
+    const isUnlocked = projectNumber <= unlockedUpTo;
+    project.classList.toggle('locked', !isUnlocked);
+    if (!isUnlocked) {
+      project.classList.remove('open');
+    }
+  });
+
+  document.querySelectorAll('.nav-btn').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    const projectNumber = Number(href.replace('#p', ''));
+    link.classList.toggle('locked', projectNumber > unlockedUpTo);
+  });
+}
+
 function toggle(header) {
   const project = header.parentElement;
-  project.classList.toggle('open');
+  const projectNumber = Number(project.dataset.project);
+  if (projectNumber > getUnlockedUpTo()) {
+    return;
+  }
+
+  const isOpen = project.classList.contains('open');
+  closeAllProjects();
+  if (!isOpen) {
+    project.classList.add('open');
+  }
+}
+
+function goToNextProject(currentProject) {
+  const nextProject = currentProject + 1;
+  if (nextProject > LAST_PROJECT) {
+    return;
+  }
+
+  if (nextProject > getUnlockedUpTo()) {
+    setUnlockedUpTo(nextProject);
+  }
+
+  updateProjects();
+  openProject(nextProject, true);
+}
+
+function markComplete() {
+  localStorage.setItem(COMPLETE_KEY, 'true');
+  setCompletionBannerVisible(true);
+}
+
+function ensureProjectMetadata() {
+  document.querySelectorAll('.project').forEach((project, index) => {
+    project.dataset.project = String(index + 1);
+  });
+}
+
+function injectLockIndicators() {
+  document.querySelectorAll('.project-header').forEach((header) => {
+    if (header.querySelector('.lock-indicator')) return;
+    const title = header.querySelector('.proj-title');
+    if (!title) return;
+    const indicator = document.createElement('span');
+    indicator.className = 'lock-indicator';
+    indicator.textContent = '\uD83D\uDD12 Locked';
+    title.insertAdjacentElement('afterend', indicator);
+  });
+}
+
+function injectPrerequisites() {
+  if (document.getElementById('prerequisites')) return;
+  const main = document.querySelector('main');
+  const firstProject = document.getElementById('p1');
+  if (!main || !firstProject) return;
+
+  const section = document.createElement('section');
+  section.className = 'prereq';
+  section.id = 'prerequisites';
+  section.innerHTML = `
+    <div class="prereq-header">
+      <p class="header-tag">Before You Start</p>
+      <h2>What You Need</h2>
+      <p class="prereq-copy">Components, software, and setup before you begin</p>
+      <button class="prereq-toggle" type="button" onclick="togglePrerequisites()">
+        <span class="prereq-toggle-icon">▾</span>
+        <span class="prereq-toggle-label">See what you need</span>
+      </button>
+    </div>
+    <div class="prereq-content">
+      <div class="prereq-grid">
+        <div class="prereq-block">
+          <h3>Components Master List</h3>
+          <ul class="prereq-list">
+            <li>ESP32 development board</li>
+            <li>LEDs, including red, yellow, and green</li>
+            <li>220 ohm resistors</li>
+            <li>Push button</li>
+            <li>Potentiometer</li>
+            <li>DHT11 temperature and humidity sensor</li>
+            <li>HC-SR04 ultrasonic sensor</li>
+            <li>Passive buzzer</li>
+            <li>PIR motion sensor</li>
+            <li>LDR light sensor</li>
+            <li>10k ohm resistor</li>
+            <li>Breadboard and jumper wires</li>
+          </ul>
+        </div>
+        <div class="prereq-block">
+          <h3>Software Needed</h3>
+          <ul class="prereq-list">
+            <li>A modern web browser</li>
+            <li>A Wokwi account at wokwi.com</li>
+            <li>Internet access to open the simulator projects</li>
+          </ul>
+        </div>
+      </div>
+      <div class="prereq-note">No physical hardware is required for this workshop. All 10 projects run inside the Wokwi simulator.</div>
+    </div>
+  `;
+  main.insertBefore(section, firstProject);
+}
+
+function togglePrerequisites() {
+  const section = document.getElementById('prerequisites');
+  if (!section) return;
+  const expanded = section.classList.toggle('expanded');
+  const label = section.querySelector('.prereq-toggle-label');
+  if (label) {
+    label.textContent = expanded ? 'Hide' : 'See what you need';
+  }
+}
+
+function injectProjectActions() {
+  document.querySelectorAll('.project').forEach((project) => {
+    const projectNumber = Number(project.dataset.project);
+    const body = project.querySelector('.project-body');
+    if (!body || body.querySelector('.project-actions')) return;
+
+    if (projectNumber < LAST_PROJECT) {
+      const actions = document.createElement('div');
+      actions.className = 'project-actions';
+      actions.innerHTML = `<button class="flow-btn next-btn" type="button" onclick="goToNextProject(${projectNumber})">Next Project &rarr;</button>`;
+      body.appendChild(actions);
+      return;
+    }
+
+    const banner = document.createElement('div');
+    banner.id = 'completionBanner';
+    banner.className = 'completion-banner';
+    banner.textContent = "You've completed all 10 projects! Now build your own.";
+
+    const completeWrap = document.createElement('div');
+    completeWrap.className = 'project-actions';
+    completeWrap.innerHTML = '<button class="flow-btn complete-btn" type="button" onclick="markComplete()">&#10003; Mark Complete</button>';
+
+    const submitWrap = document.createElement('div');
+    submitWrap.className = 'project-actions';
+    submitWrap.innerHTML = '<a class="flow-btn submit-btn" href="[GOOGLE_FORM_URL]" target="_blank" rel="noopener noreferrer">Submit Your Project &rarr;</a>';
+
+    body.appendChild(banner);
+    body.appendChild(completeWrap);
+    body.appendChild(submitWrap);
+  });
+}
+
+function initializeWorkshop() {
+  ensureProjectMetadata();
+  injectLockIndicators();
+  injectPrerequisites();
+  injectProjectActions();
+  updateProjects();
+
+  const completed = localStorage.getItem(COMPLETE_KEY) === 'true';
+  setCompletionBannerVisible(completed);
+
+  if (completed) {
+    openProject(LAST_PROJECT, false);
+    return;
+  }
+
+  openProject(getUnlockedUpTo(), false);
 }
 
 function copyCode(btn) {
@@ -949,6 +1370,9 @@ function copyCode(btn) {
     }, 2000);
   });
 }
+
+initializeWorkshop();
 </script>
 </body>
 </html>
+
