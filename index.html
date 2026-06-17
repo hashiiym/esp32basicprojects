@@ -685,16 +685,13 @@
   </div>
   <div class="project-body">
     <p class="section-title">What students learn</p>
-    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, mapping values, PWM output, connecting input sensors to output devices — the foundation of all control systems.</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM (Pulse Width Modulation), duty cycle, how varying the on/off time of a signal controls brightness, and smooth animation using for loops.</p>
 
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
       <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Ω resistor</td></tr>
       <tr><td class="pin-comp">LED Cathode (−)</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
-      <tr><td class="pin-comp">Potentiometer Left</td><td class="pin-esp">3.3V</td><td>Power pin</td></tr>
-      <tr><td class="pin-comp">Potentiometer Middle (Wiper)</td><td class="pin-esp">GPIO 34</td><td>Analog signal pin</td></tr>
-      <tr><td class="pin-comp">Potentiometer Right</td><td class="pin-esp">GND</td><td>Ground pin</td></tr>
     </table>
 
     <p class="section-title">Arduino code</p>
@@ -724,7 +721,7 @@
   }
 }</pre>
     </div>
-    <div class="tip">Turn the potentiometer in Wokwi and watch the LED dim and brighten in real time. Open the Serial Monitor to see the raw pot value and the mapped brightness value side by side — this is exactly how volume knobs and dimmers work.</div>
+    <div class="tip">Watch the LED smoothly fade in and out. Ask students: if PWM_RES is 8-bit, why do values go from 0 to 255? Because 2⁸ = 256 levels. Try changing delay(8) to delay(2) for a faster pulse effect.</div>
   </div>
 </div>
 
