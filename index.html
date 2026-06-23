@@ -730,7 +730,7 @@
 <div class="project" id="p5">
   <div class="project-header" onclick="toggle(this)">
     <span class="proj-num">05</span>
-    <span class="proj-title">Temperature & Humidity (DHT11)</span>
+    <span class="proj-title">Temperature & Humidity (DHT22)</span>
     <div class="proj-tags">
       <span class="tag tag-sensor">sensor</span>
     </div>
@@ -743,9 +743,9 @@
     <p class="section-title">Wiring connections</p>
     <table class="wiring-table">
       <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
-      <tr><td class="pin-comp">DHT11 VCC</td><td class="pin-esp">3.3V</td><td>Power</td></tr>
-      <tr><td class="pin-comp">DHT11 DATA</td><td class="pin-esp">GPIO 4</td><td>Through 10kΩ pull-up to 3.3V</td></tr>
-      <tr><td class="pin-comp">DHT11 GND</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">DHT22 VCC</td><td class="pin-esp">3.3V</td><td>Power</td></tr>
+      <tr><td class="pin-comp">DHT22 DATA</td><td class="pin-esp">GPIO 4</td><td>Direct connection</td></tr>
+      <tr><td class="pin-comp">DHT22 GND</td><td class="pin-esp">GND</td><td></td></tr>
     </table>
 
     <p class="section-title">Library needed</p>
@@ -754,24 +754,24 @@
     <p class="section-title">Arduino code</p>
     <div class="code-wrap">
       <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">// Project 5: DHT11 Temperature & Humidity</span>
+      <pre><span class="cm">// Project 5: DHT22 Temperature & Humidity</span>
 <span class="cm">// Library: DHT sensor library by Adafruit</span>
 
 #include &lt;DHT.h&gt;
 
 <span class="kw">const int</span> DHT_PIN  = <span class="nm">4</span>;
-<span class="kw">const int</span> DHT_TYPE = DHT11;
+<span class="kw">const int</span> DHT_TYPE = DHT22;
 
 DHT dht(DHT_PIN, DHT_TYPE);
 
 <span class="tp">void</span> <span class="fn">setup</span>() {
   Serial.begin(<span class="nm">115200</span>);
   dht.begin();
-  Serial.println(<span class="st">"DHT11 Ready!"</span>);
+  Serial.println(<span class="st">"DHT22 Ready!"</span>);
 }
 
 <span class="tp">void</span> <span class="fn">loop</span>() {
-  delay(<span class="nm">2000</span>);  <span class="cm">// DHT11 needs 2s between readings</span>
+  delay(<span class="nm">2000</span>);  <span class="cm">// DHT22 needs 2s between readings</span>
 
   <span class="kw">float</span> humidity    = dht.readHumidity();
   <span class="kw">float</span> temperature = dht.readTemperature(); <span class="cm">// Celsius</span>
@@ -788,7 +788,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
   Serial.println(<span class="st">"%"</span>);
 }</pre>
     </div>
-    <div class="tip">In Wokwi, click the DHT11 sensor during simulation to manually change temperature and humidity values — great for live demos!</div>
+    <div class="tip">In Wokwi, click the DHT22 sensor during simulation to manually change temperature and humidity values — great for live demos!</div>
   </div>
 </div>
 
