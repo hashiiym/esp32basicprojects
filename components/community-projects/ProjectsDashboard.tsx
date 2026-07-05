@@ -66,8 +66,10 @@ export function ProjectsDashboard({ csvUrl, submissionUrl }: ProjectsDashboardPr
   return (
     <>
       <section
-          className="relative z-10 flex w-full h-[85vh] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#121212]/95 shadow-2xl"
-        >
+        className="relative z-10 flex w-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#121212]/95 shadow-2xl h-[calc(100vh-8rem)] min-h-[500px]"
+        role="region"
+        aria-label="Community Projects Dashboard"
+      >
           <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-[#121212]/95 px-4 py-4 backdrop-blur-md sm:px-6">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#00FFA3]">
