@@ -16,22 +16,13 @@ export default function Page() {
     script.src = '/vanilla-logic.js';
     document.body.appendChild(script);
 
-    // Mount React component
-    const actionsDiv = containerRef.current.querySelector('.header-actions');
-    if (actionsDiv) {
-      actionsDiv.innerHTML = '';
-      if (!rootRef.current) {
-         rootRef.current = createRoot(actionsDiv);
-      }
+
       rootRef.current.render(<CommunityProjectsShowcase />);
     }
     
     return () => {
       document.body.removeChild(script);
-      if (rootRef.current) {
-         rootRef.current.unmount();
-         rootRef.current = null;
-      }
+
     };
   }, []);
 
