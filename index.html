@@ -1,0 +1,1994 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESP32 Workshop — Project Guide</title>
+<link rel="icon" type="image/png" href="Green Minimalist Al Quran Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f11;
+    --surface: #141618;
+    --surface2: #1c1f23;
+    --border: #2a2d32;
+    --accent: #00e5a0;
+    --accent2: #5b8fff;
+    --accent3: #ff6b6b;
+    --text: #e8eaed;
+    --muted: #6b7280;
+    --code-bg: #0a0c0e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .header-text {
+    flex: 0 1 60%;
+  }
+  .header-image {
+    flex: 0 1 40%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .header-image img {
+    width: 100%;
+    max-width: 320px;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 24px rgba(0,229,160,0.18));
+    transform: rotate(-10deg);
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  h1 span { color: var(--accent); }
+  .header-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+  .header-actions {
+    margin-top: 1.4rem;
+  }
+  .community-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0,229,160,0.45);
+    border-radius: 999px;
+    background: rgba(0,229,160,0.04);
+    color: var(--accent);
+    padding: 0.85rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .community-btn:hover {
+    background: rgba(0,229,160,0.1);
+    border-color: rgba(0,229,160,0.7);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 600px) {
+    .header-image {
+      display: none !important;
+    }
+    .header-text {
+      width: 100%;
+      flex: 1;
+    }
+    header > div {
+      flex-direction: column;
+    }
+  }
+
+  /* NAV */
+  nav {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.locked {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .community-overlay,
+  .community-submit-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(14px);
+  }
+  .community-overlay.visible,
+  .community-submit-overlay.visible {
+    display: flex;
+  }
+  .community-submit-overlay {
+    z-index: 70;
+    background: rgba(0,0,0,0.65);
+  }
+  .community-modal,
+  .community-submit-modal {
+    width: min(90vw, 1400px);
+    max-height: 90vh;
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #121212;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.65);
+  }
+  .community-submit-modal {
+    width: min(92vw, 720px);
+  }
+  .community-modal-header,
+  .community-submit-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(18,18,18,0.95);
+    backdrop-filter: blur(12px);
+  }
+  .community-title {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #fff;
+    font-weight: 700;
+  }
+  .community-meta {
+    margin-top: 0.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .community-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  .community-add-btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    background: var(--accent);
+    color: #051c15;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .community-close {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    cursor: pointer;
+  }
+  .community-body {
+    max-height: calc(90vh - 78px);
+    overflow: auto;
+    padding: 1.25rem;
+  }
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (min-width: 760px) {
+    .community-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1100px) {
+    .community-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .community-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 11rem;
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #1a1a1a;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .community-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,229,160,0.45);
+    box-shadow: 0 0 0 1px rgba(0,229,160,0.08), 0 12px 40px rgba(0,229,160,0.08);
+  }
+  .community-card-tag {
+    margin-bottom: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .community-card-title {
+    margin: 0;
+    color: #fff;
+    font-size: 1.03rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .community-card-desc {
+    line-clamp: 3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 0.75rem;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .community-card-footer {
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .community-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .community-link:hover {
+    color: #fff;
+  }
+  .community-state {
+    display: flex;
+    min-height: 40vh;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .community-state-box {
+    max-width: 34rem;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+  }
+  .community-spinner {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-top-color: var(--accent);
+    animation: communitySpin 0.9s linear infinite;
+  }
+  @keyframes communitySpin {
+    to { transform: rotate(360deg); }
+  }
+  .community-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    z-index: 80;
+    display: none;
+    transform: translateX(-50%);
+    padding: 0.85rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0,229,160,0.25);
+    background: rgba(0,0,0,0.9);
+    color: #b7f7df;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.35);
+  }
+  .community-toast.visible { display: block; }
+  .community-field-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (min-width: 680px) {
+    .community-field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .community-field,
+  .community-field-wide {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .community-field-wide { margin-top: 1rem; }
+  .community-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .community-input,
+  .community-textarea {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 0.95rem 1rem;
+    font: inherit;
+  }
+  .community-textarea {
+    min-height: 9rem;
+    resize: vertical;
+  }
+  .community-form-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .community-secondary-btn {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    color: #d1d5db;
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+  }
+  .community-primary-btn {
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #051c15;
+    padding: 0.8rem 1.1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .community-primary-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  /* MAIN */
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+  .prereq {
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(0,229,160,0.05), rgba(20,22,24,0.95));
+    overflow: hidden;
+  }
+  .prereq-header {
+    padding: 1.25rem 1.5rem;
+    background: rgba(0,229,160,0.04);
+  }
+  .prereq-toggle {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid rgba(0,229,160,0.22);
+    border-radius: 999px;
+    background: rgba(0,229,160,0.06);
+    color: var(--accent);
+    padding: 0.7rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .prereq-toggle:hover {
+    background: rgba(0,229,160,0.1);
+    border-color: rgba(0,229,160,0.38);
+  }
+  .prereq-toggle-icon {
+    display: inline-block;
+    transition: transform 0.35s ease;
+    transform-origin: center;
+  }
+  .prereq.expanded .prereq-toggle-icon {
+    transform: rotate(180deg);
+  }
+  .prereq-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .prereq.expanded .prereq-content {
+    max-height: 1200px;
+  }
+  .prereq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .prereq-copy {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 0.65rem;
+    max-width: 52rem;
+  }
+  .prereq-block h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .prereq-list {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .prereq-list li {
+    padding-left: 1rem;
+    position: relative;
+  }
+  .prereq-list li::before {
+    content: '+';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .prereq-note {
+    margin: 0 1.5rem 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,160,0.18);
+    background: rgba(0,229,160,0.06);
+    color: #b7f7df;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  /* PROJECT CARD */
+  .project {
+    margin-bottom: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .project-header {
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .project-header:hover { background: var(--surface2); }
+  .project.locked {
+    opacity: 0.48;
+  }
+  .project.locked .project-header {
+    cursor: not-allowed;
+  }
+  .project.locked .project-header:hover {
+    background: var(--surface);
+  }
+  .proj-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,229,160,0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 38px;
+    text-align: center;
+  }
+  .proj-title { font-size: 17px; font-weight: 600; flex: 1; }
+  .proj-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+  .tag-output { color: #5b8fff; border-color: rgba(91,143,255,0.3); background: rgba(91,143,255,0.08); }
+  .tag-sensor { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.08); }
+  .tag-logic  { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+  .lock-indicator {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: #d1d5db;
+    border: 1px solid rgba(209,213,219,0.22);
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    background: rgba(255,255,255,0.03);
+  }
+  .project.locked .lock-indicator {
+    display: inline-flex;
+  }
+  .chevron {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+  .project.open .chevron { transform: rotate(180deg); }
+  .project-body { display: none; padding: 1.5rem; background: var(--surface); }
+  .project.open .project-body { display: block; }
+
+  /* SECTIONS INSIDE PROJECT */
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 10px;
+    margin-top: 1.5rem;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* WIRING TABLE */
+  .wiring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.5rem;
+  }
+  .wiring-table th {
+    text-align: left;
+    padding: 7px 12px;
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .wiring-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .wiring-table tr:last-child td { border-bottom: none; }
+  .pin-esp { color: var(--accent); }
+  .pin-comp { color: var(--accent2); }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  pre {
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    white-space: pre;
+  }
+
+  /* SYNTAX COLORS */
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .cm { color: #6272a4; font-style: italic; }
+  .st { color: #f1fa8c; }
+  .nm { color: #bd93f9; }
+  .tp { color: #8be9fd; }
+
+  /* TIP BOX */
+  .tip {
+    background: rgba(0,229,160,0.06);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #a7f3d0;
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+  .tip::before { content: '// TIP: '; color: var(--accent); }
+
+  .wokwi-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    text-decoration: none;
+    border: 1px solid rgba(91,143,255,0.3);
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-top: 1rem;
+    transition: all 0.15s;
+  }
+  .wokwi-link:hover { background: rgba(91,143,255,0.1); }
+  .project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+  }
+  .flow-btn {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .flow-btn:hover {
+    transform: translateY(-1px);
+  }
+  .next-btn {
+    background: var(--accent);
+    color: #06271d;
+  }
+  .complete-btn {
+    background: transparent;
+    color: var(--accent);
+    border-color: rgba(0,229,160,0.35);
+  }
+  .complete-btn:hover {
+    background: rgba(0,229,160,0.08);
+  }
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent);
+    color: #06271d;
+    font-weight: 700;
+  }
+  .completion-banner {
+    display: none;
+    margin-top: 1.2rem;
+    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,229,160,0.25);
+    background: rgba(0,229,160,0.08);
+    color: #b7f7df;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .completion-banner.visible {
+    display: block;
+  }
+
+  /* FOOTER */
+  footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-text">
+    <div class="header-tag">IEDC Workshop — ESP32 Basics</div>
+    <h1>10 <span>ESP32</span> Projects<br>Code + Wiring Guide</h1>
+    <div class="header-meta">
+      <span>Platform: Wokwi Simulator</span>
+      <span>Level: Beginner</span>
+      <span>All projects: No hardware needed</span>
+    </div>
+    <div class="header-actions">
+      <button class="community-btn" type="button" onclick="openCommunityProjects()">Explore Community Projects</button>
+    </div>
+  </div>
+  <div class="header-image">
+    <img src="ESP32_ESP-32S_Development_Board_2_4GHz_WiFi+Bluetooth_Dual_Mode_-_Redeem_Hardware_Products__DIY_Electronics__and_Kits_by_PCBWay_Beans-removebg-preview.png" alt="ESP32 development board">
+  </div>
+</header>
+
+<nav>
+  <a class="nav-btn" href="#p1">01 LED Blink</a>
+  <a class="nav-btn" href="#p2">02 Button + LED</a>
+  <a class="nav-btn" href="#p3">03 Potentiometer</a>
+  <a class="nav-btn" href="#p4">04 PWM Fade</a>
+  <a class="nav-btn" href="#p5">05 DHT11 Temp</a>
+  <a class="nav-btn" href="#p6">06 Ultrasonic</a>
+  <a class="nav-btn" href="#p7">07 Traffic Light</a>
+  <a class="nav-btn" href="#p8">08 Buzzer Melody</a>
+  <a class="nav-btn" href="#p9">09 PIR Motion</a>
+  <a class="nav-btn" href="#p10">10 LDR Auto LED</a>
+</nav>
+
+<main>
+
+<!-- PROJECT 1 -->
+<div class="project open" id="p1">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">01</span>
+    <span class="proj-title">LED Blink</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">GPIO digital output, setup() vs loop(), delay() timing — the foundation of all hardware projects.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED (+) Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED (–) Cathode</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 1: LED Blink</span>
+<span class="cm">// GPIO 2 is also the built-in LED on most ESP32 boards</span>
+
+<span class="kw">const int</span> LED_PIN = <span class="nm">2</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_PIN, OUTPUT);   <span class="cm">// set pin as output</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  digitalWrite(LED_PIN, HIGH);  <span class="cm">// LED ON</span>
+  delay(<span class="nm">1000</span>);                   <span class="cm">// wait 1 second</span>
+  digitalWrite(LED_PIN, LOW);   <span class="cm">// LED OFF</span>
+  delay(<span class="nm">1000</span>);                   <span class="cm">// wait 1 second</span>
+}</pre>
+    </div>
+    <div class="tip">Try changing 1000 to 100 — the LED blinks 10x faster. Ask students: what happens at delay(10)?</div>
+    <a class="wokwi-link" href="https://wokwi.com/projects/new/esp32" target="_blank">↗ Open in Wokwi</a>
+  </div>
+</div>
+
+<!-- PROJECT 2 -->
+<div class="project" id="p2">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">02</span>
+    <span class="proj-title">Push Button + LED</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Digital input reading, pull-up resistors, if-else logic — responding to real-world input.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">Button Pin 1</td><td class="pin-esp">GPIO 4</td><td>Any leg on one side</td></tr>
+      <tr><td class="pin-comp">Button Pin 2</td><td class="pin-esp">GND</td><td>Other leg</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 2: Push Button controls LED</span>
+<span class="cm">// INPUT_PULLUP uses ESP32's internal resistor — no external resistor needed</span>
+
+<span class="kw">const int</span> LED_PIN    = <span class="nm">2</span>;
+<span class="kw">const int</span> BUTTON_PIN = <span class="nm">4</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_PIN,    OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP); <span class="cm">// internal pull-up: HIGH when not pressed</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> btnState = digitalRead(BUTTON_PIN);
+
+  <span class="kw">if</span> (btnState == LOW) {    <span class="cm">// LOW = button pressed (pulled to GND)</span>
+    digitalWrite(LED_PIN, HIGH);
+  } <span class="kw">else</span> {
+    digitalWrite(LED_PIN, LOW);
+  }
+}</pre>
+    </div>
+    <div class="tip">INPUT_PULLUP inverts logic: LOW means pressed. Ask students why this is and what a pull-down resistor does differently.</div>
+  </div>
+</div>
+
+<!-- PROJECT 3 -->
+<div class="project" id="p3">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">03</span>
+    <span class="proj-title">Potentiometer + Serial Monitor</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog input, ADC (Analog-to-Digital Converter), Serial.print() for debugging — reading variable voltages.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Potentiometer Left</td><td class="pin-esp">3.3V</td><td>Power pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Middle (Wiper)</td><td class="pin-esp">GPIO 34</td><td>Analog input pin</td></tr>
+      <tr><td class="pin-comp">Potentiometer Right</td><td class="pin-esp">GND</td><td>Ground pin</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 3: Potentiometer value on Serial Monitor</span>
+<span class="cm">// ESP32 ADC is 12-bit: values range from 0 to 4095</span>
+
+<span class="kw">const int</span> POT_PIN = <span class="nm">34</span>; <span class="cm">// GPIO34 is input-only, great for analog</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);  <span class="cm">// start serial communication</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> rawValue = analogRead(POT_PIN);   <span class="cm">// 0 to 4095</span>
+  <span class="kw">int</span> percent  = map(rawValue, <span class="nm">0</span>, <span class="nm">4095</span>, <span class="nm">0</span>, <span class="nm">100</span>); <span class="cm">// convert to 0-100%</span>
+
+  Serial.print(<span class="st">"Raw: "</span>);
+  Serial.print(rawValue);
+  Serial.print(<span class="st">"  |  Percent: "</span>);
+  Serial.print(percent);
+  Serial.println(<span class="st">"%"</span>);
+
+  delay(<span class="nm">300</span>);  <span class="cm">// slow down output</span>
+}</pre>
+    </div>
+    <div class="tip">Open Wokwi's Serial Monitor (bottom panel) and turn the pot. map() is a very useful function — explain how it scales ranges.</div>
+  </div>
+</div>
+
+<!-- PROJECT 4 -->
+<div class="project" id="p4">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">04</span>
+    <span class="proj-title">PWM LED Dimmer (Fade)</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM (Pulse Width Modulation), duty cycle, how varying the on/off time of a signal controls brightness, and smooth animation using for loops.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 16</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (−)</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 4: PWM LED Fade — smooth brightness in and out</span>
+<span class="cm">// Compatible with ESP32 Arduino Core v3.x (Wokwi default)</span>
+
+<span class="kw">const int</span> LED_PIN  = <span class="nm">16</span>;
+<span class="kw">const int</span> PWM_FREQ = <span class="nm">5000</span>;  <span class="cm">// 5 kHz</span>
+<span class="kw">const int</span> PWM_RES  = <span class="nm">8</span>;     <span class="cm">// 8-bit resolution: values 0–255</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  ledcAttach(LED_PIN, PWM_FREQ, PWM_RES); <span class="cm">// single-call setup (Core v3.x)</span>
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Fade in: dark → bright</span>
+  <span class="kw">for</span> (<span class="kw">int</span> b = <span class="nm">0</span>; b <= <span class="nm">255</span>; b++) {
+    ledcWrite(LED_PIN, b);
+    delay(<span class="nm">8</span>);
+  }
+  <span class="cm">// Fade out: bright → dark</span>
+  <span class="kw">for</span> (<span class="kw">int</span> b = <span class="nm">255</span>; b >= <span class="nm">0</span>; b--) {
+    ledcWrite(LED_PIN, b);
+    delay(<span class="nm">8</span>);
+  }
+}</pre>
+    </div>
+    <div class="tip">Watch the LED smoothly fade in and out. Ask students: if PWM_RES is 8-bit, why do values go from 0 to 255? Because 2⁸ = 256 levels. Try changing delay(8) to delay(2) for a faster pulse effect.</div>
+  </div>
+</div>
+
+<!-- PROJECT 5 -->
+<div class="project" id="p5">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">05</span>
+    <span class="proj-title">Temperature & Humidity (DHT22)</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Sensor libraries, single-wire data protocol, reading structured sensor data (temperature + humidity together).</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">DHT22 VCC</td><td class="pin-esp">3.3V</td><td>Power</td></tr>
+      <tr><td class="pin-comp">DHT22 DATA</td><td class="pin-esp">GPIO 4</td><td>Direct connection</td></tr>
+      <tr><td class="pin-comp">DHT22 GND</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Library needed</p>
+    <p style="font-size:12px;color:#9ca3af;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">In Wokwi: automatically available. In Arduino IDE: install "DHT sensor library" by Adafruit.</p>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 5: DHT22 Temperature & Humidity</span>
+<span class="cm">// Library: DHT sensor library by Adafruit</span>
+
+#include &lt;DHT.h&gt;
+
+<span class="kw">const int</span> DHT_PIN  = <span class="nm">4</span>;
+<span class="kw">const int</span> DHT_TYPE = DHT22;
+
+DHT dht(DHT_PIN, DHT_TYPE);
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  dht.begin();
+  Serial.println(<span class="st">"DHT22 Ready!"</span>);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  delay(<span class="nm">2000</span>);  <span class="cm">// DHT22 needs 2s between readings</span>
+
+  <span class="kw">float</span> humidity    = dht.readHumidity();
+  <span class="kw">float</span> temperature = dht.readTemperature(); <span class="cm">// Celsius</span>
+
+  <span class="kw">if</span> (isnan(humidity) || isnan(temperature)) {
+    Serial.println(<span class="st">"Sensor read error!"</span>);
+    <span class="kw">return</span>;
+  }
+
+  Serial.print(<span class="st">"Temp: "</span>);
+  Serial.print(temperature);
+  Serial.print(<span class="st">" °C  |  Humidity: "</span>);
+  Serial.print(humidity);
+  Serial.println(<span class="st">"%"</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, click the DHT22 sensor during simulation to manually change temperature and humidity values — great for live demos!</div>
+  </div>
+</div>
+
+<!-- PROJECT 6 -->
+<div class="project" id="p6">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">06</span>
+    <span class="proj-title">Ultrasonic Distance Meter (HC-SR04)</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Trigger/echo pulse timing, pulseIn(), speed of sound, converting microseconds to centimeters.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">HC-SR04 VCC</td><td class="pin-esp">5V (VIN)</td><td>HC-SR04 needs 5V, not 3.3V</td></tr>
+      <tr><td class="pin-comp">HC-SR04 TRIG</td><td class="pin-esp">GPIO 5</td><td>Trigger pin</td></tr>
+      <tr><td class="pin-comp">HC-SR04 ECHO</td><td class="pin-esp">GPIO 18</td><td>Echo pin</td></tr>
+      <tr><td class="pin-comp">HC-SR04 GND</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 6: Ultrasonic Distance Meter</span>
+<span class="cm">// Formula: distance (cm) = duration × 0.034 / 2</span>
+
+<span class="kw">const int</span> TRIG_PIN = <span class="nm">5</span>;
+<span class="kw">const int</span> ECHO_PIN = <span class="nm">18</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Send 10µs trigger pulse</span>
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(<span class="nm">2</span>);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(<span class="nm">10</span>);
+  digitalWrite(TRIG_PIN, LOW);
+
+  <span class="cm">// Measure echo duration in microseconds</span>
+  <span class="kw">long</span> duration = pulseIn(ECHO_PIN, HIGH);
+
+  <span class="cm">// Convert to centimeters</span>
+  <span class="kw">float</span> distance = duration * <span class="nm">0.034</span> / <span class="nm">2</span>;
+
+  Serial.print(<span class="st">"Distance: "</span>);
+  Serial.print(distance);
+  Serial.println(<span class="st">" cm"</span>);
+
+  delay(<span class="nm">500</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, drag the object in front of the HC-SR04 sensor to change the simulated distance. Ask students to explain why we divide by 2 (sound travels to object AND back).</div>
+  </div>
+</div>
+
+<!-- PROJECT 7 -->
+<div class="project" id="p7">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">07</span>
+    <span class="proj-title">Traffic Light (3 LEDs)</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Multiple GPIO outputs, sequential state logic, thinking in "states" — foundation of state machines.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Red LED Anode</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Yellow LED Anode</td><td class="pin-esp">GPIO 4</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">Green LED Anode</td><td class="pin-esp">GPIO 5</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">All LED Cathodes</td><td class="pin-esp">GND</td><td>Share a common GND</td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 7: Traffic Light Sequence</span>
+
+<span class="kw">const int</span> RED_PIN    = <span class="nm">2</span>;
+<span class="kw">const int</span> YELLOW_PIN = <span class="nm">4</span>;
+<span class="kw">const int</span> GREEN_PIN  = <span class="nm">5</span>;
+
+<span class="tp">void</span> <span class="fn">allOff</span>() {
+  digitalWrite(RED_PIN,    LOW);
+  digitalWrite(YELLOW_PIN, LOW);
+  digitalWrite(GREEN_PIN,  LOW);
+}
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(RED_PIN,    OUTPUT);
+  pinMode(YELLOW_PIN, OUTPUT);
+  pinMode(GREEN_PIN,  OUTPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// RED — Stop</span>
+  allOff();
+  digitalWrite(RED_PIN, HIGH);
+  delay(<span class="nm">4000</span>);
+
+  <span class="cm">// RED + YELLOW — Get ready</span>
+  digitalWrite(YELLOW_PIN, HIGH);
+  delay(<span class="nm">1000</span>);
+
+  <span class="cm">// GREEN — Go</span>
+  allOff();
+  digitalWrite(GREEN_PIN, HIGH);
+  delay(<span class="nm">4000</span>);
+
+  <span class="cm">// YELLOW — Slow down</span>
+  allOff();
+  digitalWrite(YELLOW_PIN, HIGH);
+  delay(<span class="nm">1500</span>);
+}</pre>
+    </div>
+    <div class="tip">Challenge students: add a push button for pedestrian crossing — pressing it should interrupt the cycle and hold RED for 5 seconds.</div>
+  </div>
+</div>
+
+<!-- PROJECT 8 -->
+<div class="project" id="p8">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">08</span>
+    <span class="proj-title">Buzzer Melody Player</span>
+    <div class="proj-tags">
+      <span class="tag tag-output">output</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">PWM for audio, frequency = musical pitch, storing data in arrays, looping through arrays with for loops.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">Buzzer (+)</td><td class="pin-esp">GPIO 18</td><td>Passive buzzer only (not active)</td></tr>
+      <tr><td class="pin-comp">Buzzer (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 8: Buzzer Melody — Wokwi compatible (Arduino Core v3.x)</span>
+
+<span class="kw">const int</span> BUZZER_PIN = <span class="nm">18</span>;
+
+<span class="cm">// Note frequencies (Hz)</span>
+<span class="kw">const int</span> NOTE_C4 = <span class="nm">262</span>;
+<span class="kw">const int</span> NOTE_D4 = <span class="nm">294</span>;
+<span class="kw">const int</span> NOTE_E4 = <span class="nm">330</span>;
+<span class="kw">const int</span> NOTE_F4 = <span class="nm">349</span>;
+<span class="kw">const int</span> NOTE_G4 = <span class="nm">392</span>;
+<span class="kw">const int</span> NOTE_A4 = <span class="nm">440</span>;
+<span class="kw">const int</span> REST    = <span class="nm">0</span>;
+
+<span class="cm">// Twinkle Twinkle Little Star</span>
+<span class="kw">int</span> melody[] = {
+  NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4,
+  NOTE_A4, NOTE_A4, NOTE_G4, REST,
+  NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4,
+  NOTE_D4, NOTE_D4, NOTE_C4, REST
+};
+
+<span class="kw">int</span> durations[] = {
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">800</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">400</span>,
+  <span class="nm">400</span>, <span class="nm">400</span>, <span class="nm">800</span>, <span class="nm">400</span>
+};
+
+<span class="kw">int</span> noteCount = <span class="kw">sizeof</span>(melody) / <span class="kw">sizeof</span>(melody[<span class="nm">0</span>]);
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; noteCount; i++) {
+    <span class="kw">if</span> (melody[i] == REST) {
+      noTone(BUZZER_PIN);
+    } <span class="kw">else</span> {
+      tone(BUZZER_PIN, melody[i], durations[i]);
+    }
+    delay(durations[i] + <span class="nm">50</span>); <span class="cm">// note duration + short gap</span>
+    noTone(BUZZER_PIN);
+  }
+  delay(<span class="nm">2000</span>);
+}</pre>
+    </div>
+    <div class="tip">Explain: higher Hz = higher pitch. 440 Hz is concert A. Students can add their own notes to the arrays to compose a different song!</div>
+  </div>
+</div>
+
+<!-- PROJECT 9 -->
+<div class="project" id="p9">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">09</span>
+    <span class="proj-title">PIR Motion Alert</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Passive infrared sensing, real-world trigger events, responding to sensor HIGH/LOW state changes.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">PIR VCC</td><td class="pin-esp">5V (VIN)</td><td>PIR needs 5V</td></tr>
+      <tr><td class="pin-comp">PIR OUT</td><td class="pin-esp">GPIO 13</td><td>Signal pin</td></tr>
+      <tr><td class="pin-comp">PIR GND</td><td class="pin-esp">GND</td><td></td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (–)</td><td class="pin-esp">GND</td><td></td></tr>
+    </table>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 9: PIR Motion Detector with LED Alert</span>
+<span class="cm">// PIR output is HIGH when motion detected, LOW otherwise</span>
+
+<span class="kw">const int</span> PIR_PIN = <span class="nm">13</span>;
+<span class="kw">const int</span> LED_PIN = <span class="nm">2</span>;
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(PIR_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  Serial.println(<span class="st">"PIR warming up... wait 30 seconds"</span>);
+  delay(<span class="nm">5000</span>); <span class="cm">// In real life PIR needs 30s warm-up; short for demo</span>
+  Serial.println(<span class="st">"Ready! Watching for motion..."</span>);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> motion = digitalRead(PIR_PIN);
+
+  <span class="kw">if</span> (motion == HIGH) {
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println(<span class="st">"Motion DETECTED!"</span>);
+    delay(<span class="nm">2000</span>);  <span class="cm">// keep LED on for 2 seconds</span>
+  } <span class="kw">else</span> {
+    digitalWrite(LED_PIN, LOW);
+    Serial.println(<span class="st">"No motion."</span>);
+  }
+
+  delay(<span class="nm">200</span>);
+}</pre>
+    </div>
+    <div class="tip">In Wokwi, click the PIR sensor during simulation to toggle motion ON/OFF. Add a buzzer to make it a real intruder alarm!</div>
+  </div>
+</div>
+
+<!-- PROJECT 10 -->
+<div class="project" id="p10">
+  <div class="project-header" onclick="toggle(this)">
+    <span class="proj-num">10</span>
+    <span class="proj-title">LDR Light Sensor + Auto LED</span>
+    <div class="proj-tags">
+      <span class="tag tag-sensor">sensor</span>
+      <span class="tag tag-output">output</span>
+      <span class="tag tag-logic">logic</span>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="project-body">
+    <p class="section-title">What students learn</p>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:1rem;">Analog sensors, voltage divider, threshold-based automation — the pattern behind smart lighting, auto-brightness, and countless IoT devices.</p>
+
+    <p class="section-title">Wiring connections</p>
+    <table class="wiring-table">
+      <tr><th>Component Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+      <tr><td class="pin-comp">LDR Pin 1</td><td class="pin-esp">3.3V</td><td>Either leg of the LDR</td></tr>
+      <tr><td class="pin-comp">LDR Pin 2</td><td class="pin-esp">GPIO 34</td><td>Other leg of the LDR</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor Pin 1</td><td class="pin-esp">GPIO 34</td><td>Same row as LDR Pin 2</td></tr>
+      <tr><td class="pin-comp">10kΩ Resistor Pin 2</td><td class="pin-esp">GND</td><td>Pulls the signal down</td></tr>
+      <tr><td class="pin-comp">LED Anode (+)</td><td class="pin-esp">GPIO 2</td><td>Through 220Ω resistor</td></tr>
+      <tr><td class="pin-comp">LED Cathode (−)</td><td class="pin-esp">GND</td><td>Short leg of LED</td></tr>
+    </table>
+    <div class="tip">Think of the LDR and the 10kΩ resistor as a voltage divider — they share a middle point connected to GPIO 34. When it's bright, LDR resistance drops and the voltage at GPIO 34 goes low. When dark, resistance rises and voltage goes high. The ESP32 reads this change.</div>
+
+    <p class="section-title">Arduino code</p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Arduino / C++</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm">// Project 10: LDR Auto LED — LED turns ON in the dark</span>
+<span class="cm">// Lower LDR value = more light. Higher value = darker.</span>
+
+<span class="kw">const int</span> LDR_PIN   = <span class="nm">34</span>;
+<span class="kw">const int</span> LED_PIN   = <span class="nm">2</span>;
+<span class="kw">const int</span> THRESHOLD = <span class="nm">2000</span>; <span class="cm">// adjust based on your environment</span>
+
+<span class="tp">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="nm">115200</span>);
+  pinMode(LED_PIN, OUTPUT);
+}
+
+<span class="tp">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> ldrValue = analogRead(LDR_PIN);  <span class="cm">// 0–4095</span>
+
+  Serial.print(<span class="st">"Light level: "</span>);
+  Serial.print(ldrValue);
+
+  <span class="kw">if</span> (ldrValue &gt; THRESHOLD) {
+    <span class="cm">// It's dark — LDR resistance high, voltage high</span>
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println(<span class="st">"  → DARK, LED ON"</span>);
+  } <span class="kw">else</span> {
+    <span class="cm">// It's bright</span>
+    digitalWrite(LED_PIN, LOW);
+    Serial.println(<span class="st">"  → BRIGHT, LED OFF"</span>);
+  }
+
+  delay(<span class="nm">500</span>);
+}</pre>
+    </div>
+    <div class="tip">Run it first and read the raw LDR value in serial — then set THRESHOLD to a value between your bright and dark readings. In Wokwi, slide the LDR light slider to simulate day/night.</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <span>ESP32 Workshop — IEDC Club</span>
+  <span>Simulator: wokwi.com</span>
+  <span>All 10 projects · Beginner level</span>
+</footer>
+
+<div class="community-overlay" id="communityOverlay" aria-hidden="true">
+  <div class="community-modal" role="dialog" aria-modal="true" aria-labelledby="communityModalTitle">
+    <div class="community-modal-header">
+      <div>
+        <div class="community-meta">SimSpark Community Projects</div>
+        <h2 class="community-title" id="communityModalTitle">Community Projects Showcase</h2>
+      </div>
+      <div class="community-header-actions">
+        <button class="community-add-btn" type="button" onclick="openSubmitProject()">Add Project</button>
+        <button class="community-close" type="button" aria-label="Close community projects" onclick="closeCommunityProjects()">✕</button>
+      </div>
+    </div>
+    <div class="community-body">
+      <div class="community-state" id="communityState">
+        <div class="community-state-box">
+          <div style="display:flex;align-items:center;gap:0.75rem;"><span class="community-spinner"></span><span>Loading community projects...</span></div>
+        </div>
+      </div>
+      <div class="community-grid" id="communityGrid" hidden></div>
+    </div>
+  </div>
+</div>
+
+<div class="community-submit-overlay" id="communitySubmitOverlay" aria-hidden="true">
+  <div class="community-submit-modal" role="dialog" aria-modal="true" aria-labelledby="submitModalTitle">
+    <div class="community-submit-header">
+      <div>
+        <div class="community-meta">Submit Project</div>
+        <h2 class="community-title" id="submitModalTitle">Add a community project</h2>
+      </div>
+      <button class="community-close" type="button" aria-label="Close submit form" onclick="closeSubmitProject()">✕</button>
+    </div>
+    <div class="community-body">
+      <form id="communitySubmitForm">
+        <div class="community-field-grid">
+          <label class="community-field">
+            <span class="community-label">Name</span>
+            <input class="community-input" id="communityName" name="name" required placeholder="Your name" />
+          </label>
+          <label class="community-field">
+            <span class="community-label">Project Title</span>
+            <input class="community-input" id="communityTitle" name="title" required placeholder="Project title" />
+          </label>
+        </div>
+        <label class="community-field-wide">
+          <span class="community-label">Description</span>
+          <textarea class="community-textarea" id="communityDescription" name="description" required placeholder="What does your project do?"></textarea>
+        </label>
+        <label class="community-field-wide">
+          <span class="community-label">Wokwi Link</span>
+          <input class="community-input" id="communityLink" name="wokwiLink" type="url" required placeholder="https://wokwi.com/..." />
+        </label>
+        <div class="community-form-actions">
+          <button class="community-secondary-btn" type="button" onclick="closeSubmitProject()">Cancel</button>
+          <button class="community-primary-btn" type="submit" id="communitySubmitBtn">Submit Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+const STORAGE_KEY = 'unlockedUpTo';
+const COMPLETE_KEY = 'allProjectsComplete';
+const LAST_PROJECT = 10;
+const COMMUNITY_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8Rwen4Xf5Bjs3cTBDMIlnXhkf2BmWVzowk6csWB3bTa4OdU7GqHpN5QmQQOmDfaM-LO0on0_3kNiq/pub?output=csv';
+const COMMUNITY_SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbyKUuO4qJ1tmV9xYPuJ1NTNgFSxh_l_nRXKAfgDayTiGsQkU0vUmMHN3PlXg1-9qSp2/exec';
+let communityProjects = [];
+let communityLoaded = false;
+let communityLoading = false;
+let communityToastTimer = null;
+
+function normalizeCommunityKey(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function getCommunityField(row, keys) {
+  const normalizedEntries = Object.entries(row).map(([key, value]) => [normalizeCommunityKey(key), String(value || '').trim()]);
+  const lookup = new Map(normalizedEntries);
+
+  for (const key of keys) {
+    const value = lookup.get(normalizeCommunityKey(key));
+    if (value) {
+      return value;
+    }
+  }
+
+  return '';
+}
+
+function showCommunityToast(message) {
+  const toast = document.getElementById('communityToast');
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add('visible');
+  window.clearTimeout(communityToastTimer);
+  communityToastTimer = window.setTimeout(() => {
+    toast.classList.remove('visible');
+  }, 2400);
+}
+
+function escapeCommunityHtml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function normalizeCommunityLink(value) {
+  const trimmed = String(value || '').trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  return '';
+}
+
+function openCommunityProjects() {
+  const overlay = document.getElementById('communityOverlay');
+  if (!overlay) return;
+
+  overlay.classList.add('visible');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  if (!communityLoaded) {
+    loadCommunityProjects();
+  }
+}
+
+function closeCommunityProjects() {
+  const overlay = document.getElementById('communityOverlay');
+  if (!overlay) return;
+
+  overlay.classList.remove('visible');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  closeSubmitProject();
+}
+
+function openSubmitProject() {
+  const overlay = document.getElementById('communitySubmitOverlay');
+  if (!overlay) return;
+
+  overlay.classList.add('visible');
+  overlay.setAttribute('aria-hidden', 'false');
+  const nameInput = document.getElementById('communityName');
+  if (nameInput) {
+    nameInput.focus();
+  }
+}
+
+function closeSubmitProject() {
+  const overlay = document.getElementById('communitySubmitOverlay');
+  if (!overlay) return;
+
+  overlay.classList.remove('visible');
+  overlay.setAttribute('aria-hidden', 'true');
+  const form = document.getElementById('communitySubmitForm');
+  if (form) {
+    form.reset();
+  }
+  const button = document.getElementById('communitySubmitBtn');
+  if (button) {
+    button.disabled = false;
+    button.textContent = 'Submit Project';
+  }
+}
+
+function renderCommunityProjects() {
+  const grid = document.getElementById('communityGrid');
+  const state = document.getElementById('communityState');
+  if (!grid || !state) return;
+
+  if (!communityProjects.length) {
+    state.hidden = false;
+    state.innerHTML = '<div class="community-state-box"><strong style="color:#fff">No projects found</strong><div style="margin-top:0.4rem;">Add the first entry from the submit form.</div></div>';
+    grid.hidden = true;
+    grid.innerHTML = '';
+    return;
+  }
+
+  state.hidden = true;
+  grid.hidden = false;
+  grid.innerHTML = communityProjects.map((project) => `
+    <article class="community-card">
+      <div>
+        <div class="community-card-tag">${escapeCommunityHtml(project.name || 'Anonymous')}</div>
+        <h3 class="community-card-title">${escapeCommunityHtml(project.title || 'Untitled Project')}</h3>
+        <p class="community-card-desc">${escapeCommunityHtml(project.description || 'No description provided.')}</p>
+      </div>
+      <div class="community-card-footer">
+        ${normalizeCommunityLink(project.wokwiLink) ? `<a class="community-link" href="${escapeCommunityHtml(normalizeCommunityLink(project.wokwiLink))}" target="_blank" rel="noreferrer">View Project -&gt;</a>` : '<span class="community-link" style="color:#6b7280;">No project link provided</span>'}
+      </div>
+    </article>
+  `).join('');
+}
+
+async function loadCommunityProjects() {
+  if (communityLoading) return;
+  communityLoading = true;
+
+  const state = document.getElementById('communityState');
+  if (state) {
+    state.hidden = false;
+    state.innerHTML = '<div class="community-state-box"><div style="display:flex;align-items:center;gap:0.75rem;"><span class="community-spinner"></span><span>Loading community projects...</span></div></div>';
+  }
+
+  try {
+    const response = await fetch(COMMUNITY_CSV_URL, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Failed to load community projects (${response.status})`);
+    }
+
+    const csvText = await response.text();
+    const parsed = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header) => header.trim()
+    });
+
+    if (parsed.errors && parsed.errors.length) {
+      throw new Error(parsed.errors[0].message || 'CSV parse failed');
+    }
+
+    communityProjects = (parsed.data || []).map((row, index) => ({
+      id: `${index}-${normalizeCommunityKey(getCommunityField(row, ['Name', 'Author', 'Submitted By']))}-${normalizeCommunityKey(getCommunityField(row, ['Project Title', 'Title', 'Project']))}`,
+      name: getCommunityField(row, ['Name', 'Author', 'Submitted By', 'Creator']) || 'Anonymous',
+      title: getCommunityField(row, ['Project Title', 'Title', 'Project', 'Name']) || `Project ${index + 1}`,
+      description: getCommunityField(row, ['Description', 'Project Description', 'Summary']) || 'No description provided.',
+      wokwiLink: getCommunityField(row, ['Wokwi Link', 'Wokwi', 'Link', 'URL', 'Project Link'])
+    }));
+
+    communityLoaded = true;
+    renderCommunityProjects();
+  } catch (error) {
+    if (state) {
+      const message = error instanceof Error ? error.message : 'Failed to load community projects';
+      state.hidden = false;
+      state.innerHTML = `<div class="community-state-box"><strong style="color:#fff">Unable to load projects</strong><div style="margin-top:0.4rem;">${message}</div><button class="community-add-btn" type="button" style="margin-top:0.85rem;" onclick="loadCommunityProjects()">Try Again</button></div>`;
+    }
+    const grid = document.getElementById('communityGrid');
+    if (grid) {
+      grid.hidden = true;
+      grid.innerHTML = '';
+    }
+  } finally {
+    communityLoading = false;
+  }
+}
+
+async function submitCommunityProject(event) {
+  event.preventDefault();
+  const button = document.getElementById('communitySubmitBtn');
+  const name = document.getElementById('communityName').value.trim();
+  const title = document.getElementById('communityTitle').value.trim();
+  const description = document.getElementById('communityDescription').value.trim();
+  const wokwiLink = document.getElementById('communityLink').value.trim();
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+  }
+
+  try {
+    await fetch(COMMUNITY_SUBMIT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({ name, title, description, wokwiLink })
+    });
+
+    showCommunityToast('Project submitted successfully');
+    closeSubmitProject();
+    await loadCommunityProjects();
+  } catch (error) {
+    showCommunityToast('Submission failed. Please try again.');
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Submit Project';
+    }
+  }
+}
+
+function bindCommunityEvents() {
+  const overlay = document.getElementById('communityOverlay');
+  const submitOverlay = document.getElementById('communitySubmitOverlay');
+  const submitForm = document.getElementById('communitySubmitForm');
+
+  if (overlay) {
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        closeCommunityProjects();
+      }
+    });
+  }
+
+  if (submitOverlay) {
+    submitOverlay.addEventListener('click', (event) => {
+      if (event.target === submitOverlay) {
+        closeSubmitProject();
+      }
+    });
+  }
+
+  if (submitForm) {
+    submitForm.addEventListener('submit', submitCommunityProject);
+  }
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      if (submitOverlay && submitOverlay.classList.contains('visible')) {
+        closeSubmitProject();
+      } else if (overlay && overlay.classList.contains('visible')) {
+        closeCommunityProjects();
+      }
+    }
+  });
+}
+
+function getUnlockedUpTo() {
+  const value = parseInt(localStorage.getItem(STORAGE_KEY) || '1', 10);
+  if (Number.isNaN(value)) return 1;
+  return Math.min(Math.max(value, 1), LAST_PROJECT);
+}
+
+function setUnlockedUpTo(value) {
+  localStorage.setItem(STORAGE_KEY, String(Math.min(Math.max(value, 1), LAST_PROJECT)));
+}
+
+function closeAllProjects() {
+  document.querySelectorAll('.project').forEach((project) => {
+    project.classList.remove('open');
+  });
+}
+
+function openProject(projectNumber, shouldScroll) {
+  const project = document.getElementById(`p${projectNumber}`);
+  if (!project) return;
+  closeAllProjects();
+  project.classList.add('open');
+  if (shouldScroll) {
+    project.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function setCompletionBannerVisible(visible) {
+  const banner = document.getElementById('completionBanner');
+  if (!banner) return;
+  banner.classList.toggle('visible', visible);
+}
+
+function updateProjects() {
+  const unlockedUpTo = getUnlockedUpTo();
+  document.querySelectorAll('.project').forEach((project) => {
+    const projectNumber = Number(project.dataset.project);
+    const isUnlocked = projectNumber <= unlockedUpTo;
+    project.classList.toggle('locked', !isUnlocked);
+    if (!isUnlocked) {
+      project.classList.remove('open');
+    }
+  });
+
+  document.querySelectorAll('.nav-btn').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    const projectNumber = Number(href.replace('#p', ''));
+    link.classList.toggle('locked', projectNumber > unlockedUpTo);
+  });
+}
+
+function toggle(header) {
+  const project = header.parentElement;
+  const projectNumber = Number(project.dataset.project);
+  if (projectNumber > getUnlockedUpTo()) {
+    return;
+  }
+
+  const isOpen = project.classList.contains('open');
+  closeAllProjects();
+  if (!isOpen) {
+    project.classList.add('open');
+  }
+}
+
+function goToNextProject(currentProject) {
+  const nextProject = currentProject + 1;
+  if (nextProject > LAST_PROJECT) {
+    return;
+  }
+
+  if (nextProject > getUnlockedUpTo()) {
+    setUnlockedUpTo(nextProject);
+  }
+
+  updateProjects();
+  openProject(nextProject, true);
+}
+
+function markComplete() {
+  localStorage.setItem(COMPLETE_KEY, 'true');
+  setCompletionBannerVisible(true);
+}
+
+function ensureProjectMetadata() {
+  document.querySelectorAll('.project').forEach((project, index) => {
+    project.dataset.project = String(index + 1);
+  });
+}
+
+function injectLockIndicators() {
+  document.querySelectorAll('.project-header').forEach((header) => {
+    if (header.querySelector('.lock-indicator')) return;
+    const title = header.querySelector('.proj-title');
+    if (!title) return;
+    const indicator = document.createElement('span');
+    indicator.className = 'lock-indicator';
+    indicator.textContent = '\uD83D\uDD12 Locked';
+    title.insertAdjacentElement('afterend', indicator);
+  });
+}
+
+function injectPrerequisites() {
+  if (document.getElementById('prerequisites')) return;
+  const main = document.querySelector('main');
+  const firstProject = document.getElementById('p1');
+  if (!main || !firstProject) return;
+
+  const section = document.createElement('section');
+  section.className = 'prereq';
+  section.id = 'prerequisites';
+  section.innerHTML = `
+    <div class="prereq-header">
+      <p class="header-tag">Before You Start</p>
+      <h2>What You Need</h2>
+      <p class="prereq-copy">Components, software, and setup before you begin</p>
+      <button class="prereq-toggle" type="button" onclick="togglePrerequisites()">
+        <span class="prereq-toggle-icon">▾</span>
+        <span class="prereq-toggle-label">See what you need</span>
+      </button>
+    </div>
+    <div class="prereq-content">
+      <div class="prereq-grid">
+        <div class="prereq-block">
+          <h3>Components Master List</h3>
+          <ul class="prereq-list">
+            <li>ESP32 development board</li>
+            <li>LEDs, including red, yellow, and green</li>
+            <li>220 ohm resistors</li>
+            <li>Push button</li>
+            <li>Potentiometer</li>
+            <li>DHT11 temperature and humidity sensor</li>
+            <li>HC-SR04 ultrasonic sensor</li>
+            <li>Passive buzzer</li>
+            <li>PIR motion sensor</li>
+            <li>LDR light sensor</li>
+            <li>10k ohm resistor</li>
+            <li>Breadboard and jumper wires</li>
+          </ul>
+        </div>
+        <div class="prereq-block">
+          <h3>Software Needed</h3>
+          <ul class="prereq-list">
+            <li>A modern web browser</li>
+            <li>A Wokwi account at wokwi.com</li>
+            <li>Internet access to open the simulator projects</li>
+          </ul>
+        </div>
+      </div>
+      <div class="prereq-note">No physical hardware is required for this workshop. All 10 projects run inside the Wokwi simulator.</div>
+    </div>
+  `;
+  main.insertBefore(section, firstProject);
+}
+
+function togglePrerequisites() {
+  const section = document.getElementById('prerequisites');
+  if (!section) return;
+  const expanded = section.classList.toggle('expanded');
+  const label = section.querySelector('.prereq-toggle-label');
+  if (label) {
+    label.textContent = expanded ? 'Hide' : 'See what you need';
+  }
+}
+
+function injectProjectActions() {
+  document.querySelectorAll('.project').forEach((project) => {
+    const projectNumber = Number(project.dataset.project);
+    const body = project.querySelector('.project-body');
+    if (!body || body.querySelector('.project-actions')) return;
+
+    if (projectNumber < LAST_PROJECT) {
+      const actions = document.createElement('div');
+      actions.className = 'project-actions';
+      actions.innerHTML = `<button class="flow-btn next-btn" type="button" onclick="goToNextProject(${projectNumber})">Next Project &rarr;</button>`;
+      body.appendChild(actions);
+      return;
+    }
+
+    const banner = document.createElement('div');
+    banner.id = 'completionBanner';
+    banner.className = 'completion-banner';
+    banner.textContent = "You've completed all 10 projects! Now build your own.";
+
+    const completeWrap = document.createElement('div');
+    completeWrap.className = 'project-actions';
+    completeWrap.innerHTML = '<button class="flow-btn complete-btn" type="button" onclick="markComplete()">&#10003; Mark Complete</button>';
+
+    const submitWrap = document.createElement('div');
+    submitWrap.className = 'project-actions';
+    submitWrap.innerHTML = '<a class="flow-btn submit-btn" href="https://forms.gle/PAMVbJvyYh7bgUSXA" target="_blank" rel="noopener noreferrer">Submit Your Project &rarr;</a>';
+
+    body.appendChild(banner);
+    body.appendChild(completeWrap);
+    body.appendChild(submitWrap);
+  });
+}
+
+function initializeWorkshop() {
+  bindCommunityEvents();
+  ensureProjectMetadata();
+  injectLockIndicators();
+  injectPrerequisites();
+  injectProjectActions();
+  updateProjects();
+
+  const completed = localStorage.getItem(COMPLETE_KEY) === 'true';
+  setCompletionBannerVisible(completed);
+
+  if (completed) {
+    openProject(LAST_PROJECT, false);
+    return;
+  }
+
+  openProject(getUnlockedUpTo(), false);
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    btn.style.color = '#00e5a0';
+    btn.style.borderColor = '#00e5a0';
+    setTimeout(() => {
+      btn.textContent = 'copy';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+
+initializeWorkshop();
+</script>
+</body>
+</html>
+
