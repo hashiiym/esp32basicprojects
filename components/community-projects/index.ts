@@ -1,5 +1,4 @@
 export { CommunityProjectsShowcase } from './CommunityProjectsShowcase';
-export { ExploreButton } from './ExploreButton';
 export { ProjectCard } from './ProjectCard';
-export { ProjectsDashboardModal } from './ProjectsDashboardModal';
+export { ProjectsDashboard } from './ProjectsDashboard';
 export { SubmitProjectModal } from './SubmitProjectModal';

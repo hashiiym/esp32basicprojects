@@ -6,9 +6,7 @@ import type { CommunityProject } from '../../types/community-projects';
 import { ProjectCard } from './ProjectCard';
 import { SubmitProjectModal } from './SubmitProjectModal';
 
-interface ProjectsDashboardModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface ProjectsDashboardProps {
   csvUrl: string;
   submissionUrl: string;
 }
@@ -26,7 +24,7 @@ function CloseIcon() {
   );
 }
 
-export function ProjectsDashboardModal({ isOpen, onClose, csvUrl, submissionUrl }: ProjectsDashboardModalProps) {
+export function ProjectsDashboard({ csvUrl, submissionUrl }: ProjectsDashboardProps) {
   const [projects, setProjects] = useState<CommunityProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -34,10 +32,6 @@ export function ProjectsDashboardModal({ isOpen, onClose, csvUrl, submissionUrl 
   const [refreshToken, setRefreshToken] = useState(0);
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
     let isActive = true;
 
     async function loadProjects() {
@@ -67,44 +61,12 @@ export function ProjectsDashboardModal({ isOpen, onClose, csvUrl, submissionUrl 
     return () => {
       isActive = false;
     };
-  }, [csvUrl, isOpen, refreshToken]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !showSubmitModal) {
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isOpen, onClose, showSubmitModal]);
-
-  if (!isOpen) {
-    return null;
-  }
+  }, [csvUrl, refreshToken]);
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center px-3 py-4 sm:px-6" onClick={onClose}>
-        <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-        <section
-          className="relative z-10 flex h-[90vh] w-[90vw] max-w-[1600px] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#121212] shadow-[0_0_100px_rgba(0,0,0,0.7)]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="projects-dashboard-title"
-          onClick={event => event.stopPropagation()}
+      <section
+          className="relative z-10 flex w-full h-[85vh] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#121212]/95 shadow-2xl"
         >
           <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-[#121212]/95 px-4 py-4 backdrop-blur-md sm:px-6">
             <div>
@@ -124,14 +86,12 @@ export function ProjectsDashboardModal({ isOpen, onClose, csvUrl, submissionUrl 
               >
                 Add Project
               </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/70 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
-                aria-label="Close projects dashboard"
+              <a
+                href="/"
+                className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 px-4 text-sm font-semibold text-white/70 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
               >
-                <CloseIcon />
-              </button>
+                Back to Home
+              </a>
             </div>
           </header>
 
@@ -172,8 +132,7 @@ export function ProjectsDashboardModal({ isOpen, onClose, csvUrl, submissionUrl 
               </div>
             )}
           </div>
-        </section>
-      </div>
+      </section>
 
       <SubmitProjectModal
         isOpen={showSubmitModal}
