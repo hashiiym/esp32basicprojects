@@ -1,12 +1,9 @@
 "use client";
 import { useEffect, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
-import { CommunityProjectsShowcase } from '../components/community-projects/CommunityProjectsShowcase';
 import './globals.css';
 
 export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rootRef = useRef<any>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -16,13 +13,8 @@ export default function Page() {
     script.src = '/vanilla-logic.js';
     document.body.appendChild(script);
 
-
-      rootRef.current.render(<CommunityProjectsShowcase />);
-    }
-    
     return () => {
       document.body.removeChild(script);
-
     };
   }, []);
 
