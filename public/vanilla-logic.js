@@ -448,7 +448,7 @@ function injectProjectActions() {
 
     const submitWrap = document.createElement('div');
     submitWrap.className = 'project-actions';
-    submitWrap.innerHTML = '<a class="flow-btn submit-btn" href="https://forms.gle/PAMVbJvyYh7bgUSXA" target="_blank" rel="noopener noreferrer">Submit Your Project &rarr;</a>';
+    submitWrap.innerHTML = '<a class="flow-btn submit-btn" href="/projects#submit">Submit Your Project &rarr;</a>';
 
     body.appendChild(banner);
     body.appendChild(completeWrap);

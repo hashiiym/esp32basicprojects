@@ -32,6 +32,12 @@ export function ProjectsDashboard({ csvUrl, submissionUrl }: ProjectsDashboardPr
   const [refreshToken, setRefreshToken] = useState(0);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#submit') {
+      setShowSubmitModal(true);
+    }
+  }, []);
+
+  useEffect(() => {
     let isActive = true;
 
     async function loadProjects() {
