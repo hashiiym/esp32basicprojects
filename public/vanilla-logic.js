@@ -1,4 +1,3 @@
-const COMMUNITY_CSV_URL = '';
 
 const STORAGE_KEY = 'unlockedUpTo';
 const COMPLETE_KEY = 'allProjectsComplete';
@@ -263,9 +262,7 @@ function bindCommunityEvents() {
 }
 
 function getUnlockedUpTo() {
-  const value = parseInt(localStorage.getItem(STORAGE_KEY) || '1', 10);
-  if (Number.isNaN(value)) return 1;
-  return Math.min(Math.max(value, 1), LAST_PROJECT);
+  return LAST_PROJECT;
 }
 
 function setUnlockedUpTo(value) {
